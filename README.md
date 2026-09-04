@@ -3,8 +3,9 @@
 This folder is the complete, self-contained website, ready to upload to any
 static host (GitHub Pages, Netlify, Vercel, S3, cPanel, etc.). It is not
 tied to Claude in any way: no data URIs pointing at a Claude environment,
-no temporary preview links, no external service calls other than the one
-Google Fonts stylesheet described below.
+no temporary preview links, no external service calls other than the
+Google Fonts stylesheet and the real Calendly scheduling widget, both
+described below.
 
 ## 1. Homepage entry point
 
@@ -74,26 +75,39 @@ to this one. This deployment folder is a snapshot of that system's
 output; either can be edited going forward, but the source project is
 easier for repeated changes.
 
-## 7. Updating external links later
+## 7. The booking flow (real Calendly integration)
 
-Search `index.html` for these specific spots:
+Every "Book a Strategy Call" button points to `#book`, a section with a
+real three-step flow (`script.js` → `initBookingFlow`):
 
-- **Booking link**: every "Book a Strategy Call" button currently points
-  to `#book`, an in-page section with a working contact form (it doesn't
-  submit anywhere yet, see the `DEV NOTE` comment right above the
-  `<button type="submit">` in the form). Once a real booking URL exists
-  (e.g. a Calendly link), replace every `href="#book"` with it, or wire
-  the form's submit handler in `script.js` (`initFormHandler`) to a real
-  endpoint.
-- **Instagram**: the footer's Instagram icon already links to
+1. The visitor fills out the contact form. Submitting it never claims a
+   meeting is booked — it only validates and reveals step 2.
+2. The real MedLead Partners Calendly page
+   (`https://calendly.com/medleadpartners`) opens inline, embedded via
+   Calendly's own widget script and prefilled with the name/email just
+   entered. `#book`'s `data-calendly-url` attribute is the one place that
+   URL lives — change it there to point at a different Calendly page.
+3. Only once Calendly itself fires a `calendly.event_scheduled` message
+   does the site show the "Strategy Call Scheduled" confirmation. Opening
+   the scheduler in step 2 is never treated as a booking on its own.
+
+This requires two external files loaded from `assets.calendly.com`
+(`widget.css` and `widget.js`) — already linked in `index.html`'s
+`<head>` and just before `</body>`, so no extra setup is needed.
+
+## 8. Other external links
+
+- **Instagram**: the footer's Instagram icon links to
   `https://www.instagram.com/medleadpartners/` and opens in a new tab.
   No action needed unless the URL changes.
-- **Contact email/phone, other social links, Privacy Policy/Terms**: not
-  included in this build because none were provided, nothing fake was
-  added in their place. Search `index.html` for `footer-cta-block` and
+- **Contact email**: `info@medleadpartners.com` is live in the footer as
+  a `mailto:` link.
+- **Other social links, Privacy Policy/Terms**: not included in this
+  build because none were provided, nothing fake was added in their
+  place. Search `index.html` for `footer-cta-block` and
   `footer-bottom-row` to find where these would go if added later.
 
-## 8. Deploying to a standard web host
+## 9. Deploying to a standard web host
 
 Upload all five items (`index.html`, `styles.css`, `script.js`, and the
 `assets` folder with both images inside it) to your host, preserving
@@ -103,7 +117,7 @@ whatever folder they serve as the site root, sometimes called `public/`
 or `www/`, check your host's instructions for the exact folder name).
 There is no build command to run first.
 
-## 9. GitHub Pages compatibility
+## 10. GitHub Pages compatibility
 
 Yes. To deploy with GitHub Pages:
 1. Create a GitHub repository (or use an existing one).
@@ -118,7 +132,7 @@ Yes. To deploy with GitHub Pages:
 No configuration file is required for GitHub Pages to serve this project;
 it's plain static files, which is exactly what Pages expects.
 
-## 10. Making sure it behaves exactly like the current version
+## 11. Making sure it behaves exactly like the current version
 
 It already does, this isn't a rebuild. This export was produced by taking
 the exact, already-tested current site and splitting its inlined CSS and
@@ -155,12 +169,11 @@ future content edits more easily (plain-language content file, no HTML
 editing required); it is not needed to deploy or run the site and your
 host does not need it. See `source/README.md` for how it works.
 
-## What's still a placeholder (unchanged from the current version)
+## What's still a placeholder
 
 Nothing was invented to fill these in. They're intentionally absent
 rather than faked:
-- A real booking URL (currently uses a working in-page form instead)
-- Contact email and phone number
+- Contact phone number
 - Any social link besides Instagram
 - Privacy Policy / Terms of Service pages
 - Real client case studies or testimonials (one clearly-labeled

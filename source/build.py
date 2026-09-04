@@ -19,6 +19,8 @@ Output:
 import base64
 import html
 import os
+import sys
+import shutil
 
 import content as c
 
@@ -31,13 +33,41 @@ def data_uri(path, mime="image/png"):
     return f"data:{mime};base64,{b64}"
 
 
-LOGO_URI = data_uri("assets/logo.png")
-FAVICON_URI = data_uri("assets/favicon.png")
-
 with open(os.path.join(ROOT, "template.css"), "r") as f:
     CSS = f.read()
 with open(os.path.join(ROOT, "template.js"), "r") as f:
     JS = f.read()
+
+# ==========================================================================
+# BUILD MODE
+#
+# "inline" (default, `python3 build.py`): produces a single self-contained
+#   index.html in THIS folder — CSS/JS inlined, logo/favicon as base64.
+#   This is the file to open directly or hand-edit; see README.
+#
+# "deploy" (`python3 build.py --deploy <dir>`): produces a plain static
+#   deployment bundle in <dir> — styles.css / script.js as real linked
+#   files, assets/logo.png + assets/favicon.png as real image files.
+#   Both modes are generated from the exact same content.py / build.py /
+#   template.css / template.js, so they can never drift out of sync.
+# ==========================================================================
+DEPLOY = "--deploy" in sys.argv
+if DEPLOY:
+    idx = sys.argv.index("--deploy")
+    OUT_DIR = os.path.abspath(sys.argv[idx + 1]) if len(sys.argv) > idx + 1 else os.path.join(ROOT, "..", "deploy")
+else:
+    OUT_DIR = ROOT
+
+if DEPLOY:
+    LOGO_SRC = "assets/logo.png"
+    FAVICON_SRC = "assets/favicon.png"
+else:
+    LOGO_SRC = data_uri("assets/logo.png")
+    FAVICON_SRC = data_uri("assets/favicon.png")
+
+# Backwards-compatible aliases used throughout the render_* functions below.
+LOGO_URI = LOGO_SRC
+FAVICON_URI = FAVICON_SRC
 
 
 # ==========================================================================
@@ -51,12 +81,17 @@ def nav_links(link_class=""):
 
 
 def render_head():
+    css_block = (
+        '<link rel="stylesheet" href="styles.css">'
+        if DEPLOY
+        else f"<style>\n{CSS}\n</style>"
+    )
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{html.escape(c.SITE_TITLE)}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{html.escape(c.PAGE_TITLE)}</title>
 <meta name="description" content="{html.escape(c.SITE_DESCRIPTION)}">
 
 <!-- Open Graph / social link preview foundation.
@@ -77,9 +112,11 @@ def render_head():
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-{CSS}
-</style>
+<!-- Calendly's stylesheet for the real, inline scheduling widget used in the
+     booking flow (see #book section). This is the one additional external
+     dependency the real Calendly integration requires. -->
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+{css_block}
 </head>
 <body>
 """
@@ -121,38 +158,10 @@ def render_hero():
                in-page booking form at #book, which is live and functional now. Update
                BOOKING_HREF in content.py once a real Calendly/booking URL exists. -->
           <a href="{c.BOOKING_HREF}" class="btn btn-primary">{c.PRIMARY_CTA_LABEL}</a>
-          <a href="{c.HERO_SECONDARY_CTA_HREF}" class="btn btn-secondary">{c.HERO_SECONDARY_CTA_LABEL}</a>
         </div>
       </div>
     </section>
-
-    <section class="core-idea">
-      <div class="container">
-        <p class="statement">{c.CORE_IDEA_STATEMENT}</p>
-        <p class="section-intro">{c.CORE_IDEA_SUPPORT}</p>
-      </div>
-    </section>
 """
-
-
-def render_system_flow_graphic():
-    """Custom abstract 'system flow' visual: ascending node-line (traffic
-    through to patient) with a subtle data-bar accent. Pure geometry in
-    brand colors only; no stock imagery, no literal UI screenshots."""
-    points = [(28, 132), (78, 116), (128, 98), (178, 82), (228, 62), (278, 40)]
-    path = " ".join(f"{'M' if i == 0 else 'L'}{x} {y}" for i, (x, y) in enumerate(points))
-    dots = "\n        ".join(
-        f'<circle cx="{x}" cy="{y}" r="{5 if i < len(points)-1 else 6}" '
-        f'fill="{"#6893EF" if i == len(points)-1 else "#000"}"/>'
-        for i, (x, y) in enumerate(points)
-    )
-    return f"""<svg viewBox="0 0 320 170" class="flow-graphic" role="img" aria-label="Abstract diagram of the acquisition system trending upward from traffic to booked patient">
-        <rect x="252" y="118" width="10" height="34" rx="1.5" fill="#6893EF" opacity="0.18"/>
-        <rect x="268" y="98" width="10" height="54" rx="1.5" fill="#6893EF" opacity="0.28"/>
-        <rect x="284" y="76" width="10" height="76" rx="1.5" fill="#6893EF" opacity="0.4"/>
-        <path d="{path}" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        {dots}
-      </svg>"""
 
 
 def render_how_it_works():
@@ -162,15 +171,6 @@ def render_how_it_works():
         for s in c.SYSTEM_STAGES
     )
     first = c.SYSTEM_STAGES[0]
-    process_items = "\n          ".join(
-        f'<li><span class="process-num">{i+1}</span><div><h3>{step["title"]}</h3><p>{step["text"]}</p></div></li>'
-        for i, step in enumerate(c.PROCESS_STEPS)
-    )
-    def render_badge(b):
-        logo_html = f'<img src="{b["logo"]}" alt="" class="badge-logo">' if b.get("logo") else ""
-        return f'<span class="badge-chip">{logo_html}{b["label"]}</span>'
-
-    badges = "\n            ".join(render_badge(b) for b in c.CAPABILITY_BADGES)
 
     return f"""
     <section class="section section-tint" id="how-it-works" data-nav-section>
@@ -187,23 +187,6 @@ def render_how_it_works():
         <div class="stage-panel">
           <div class="stage-panel-title" id="stage-panel-title">{first["title"]}</div>
           <p class="stage-panel-text" id="stage-panel-text">{first["text"]}</p>
-        </div>
-
-        <div class="process-block">
-          <h3 class="process-heading">{c.PROCESS_HEADING}</h3>
-          <ol class="process-list">
-            {process_items}
-          </ol>
-        </div>
-
-        <div class="tech-strip">
-          <div class="graphic-panel">{render_system_flow_graphic()}</div>
-          <div class="tech-strip-info">
-            <p class="tech-stack-label">{c.TECH_STACK_LABEL}</p>
-            <div class="badge-row">
-              {badges}
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -365,7 +348,7 @@ def render_sample_testimonial_card():
         </figure>"""
 
 
-def render_results():
+def render_results_and_about():
     track_items = "\n          ".join(
         f'<div class="track-item"><div class="track-label">{item["label"]}</div>'
         f'<p class="track-text">{item["text"]}</p></div>'
@@ -390,10 +373,14 @@ def render_results():
         proof_html = f"""<p class="proof-note">Verified case studies will appear here as client results come in.</p>
         <div class="proof-single">{"".join(proof_cards)}</div>"""
 
+    # Results and About share one section wrapper (one set of top/bottom
+    # padding instead of two) since both are now short, adjacent ideas —
+    # trust/credibility and why the system matters. Each keeps its own
+    # id so nav anchors (#results, #about) still work independently.
     return f"""
-    <section class="section" id="results" data-nav-section>
+    <section class="section">
       <div class="container">
-        <div class="section-head">
+        <div id="results" class="section-head" data-nav-section>
           <h2 class="marker"><span class="plus">+</span> Results</h2>
           <p class="section-intro">{c.RESULTS_INTRO}</p>
         </div>
@@ -403,27 +390,13 @@ def render_results():
           {track_items}
         </div>
 
+        {proof_html}
+
         <div class="results-divider"></div>
 
-        {proof_html}
-      </div>
-    </section>
-"""
-
-
-def render_about():
-    pillars = "\n          ".join(
-        f'<div><h3>{p["title"]}</h3><p>{p["text"]}</p></div>' for p in c.ABOUT_PILLARS
-    )
-    return f"""
-    <section class="section section-tint" id="about" data-nav-section>
-      <div class="container">
-        <div class="section-head">
+        <div id="about" class="section-head" data-nav-section>
           <h2 class="marker"><span class="plus">+</span> About</h2>
           <p class="section-intro">{c.ABOUT_INTRO}</p>
-        </div>
-        <div class="three-col why-list">
-          {pillars}
         </div>
       </div>
     </section>
@@ -460,50 +433,83 @@ def render_booking():
     <section class="final-cta">
       <div class="container">
         <h2>{c.FINAL_CTA_HEADLINE}</h2>
-        <a href="{c.BOOKING_HREF}" class="btn btn-light">{c.PRIMARY_CTA_LABEL}</a>
       </div>
     </section>
 
-    <section class="section section-tint" id="book">
+    <!-- Booking flow: three mutually-exclusive steps, one visible at a time.
+         Only #booking-step-form is ever a claim-free contact form. Step 2
+         opens the REAL Calendly scheduler (content.py CALENDLY_URL) inline;
+         opening it is not a booking confirmation. Step 3 (the only step
+         that says a call is scheduled) renders only after Calendly itself
+         fires "calendly.event_scheduled" — see initBookingFlow() in
+         template.js. data-calendly-url is the single source of truth the
+         JS reads from, so the URL only has to change in content.py. -->
+    <section class="section section-tint" id="book" data-calendly-url="{c.CALENDLY_URL}">
       <div class="container container-narrow">
-        <div class="section-head">
-          <h2>{c.BOOKING_HEADLINE}</h2>
-          <p class="section-intro">{c.BOOKING_SUBHEAD}</p>
-        </div>
 
-        <form class="lead-form" id="lead-form" novalidate>
-          <div class="form-row">
-            <div class="field"><label for="name">Name <span class="req">*</span></label><input type="text" id="name" name="name" required autocomplete="name"></div>
-            <div class="field"><label for="business">Business <span class="req">*</span></label><input type="text" id="business" name="business" required autocomplete="organization"></div>
+        <div class="booking-step" id="booking-step-form">
+          <div class="section-head">
+            <h2>{c.BOOKING_HEADLINE}</h2>
+            <p class="section-intro">{c.BOOKING_SUBHEAD}</p>
           </div>
-          <div class="form-row">
-            <div class="field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" required autocomplete="email"></div>
-            <div class="field"><label for="phone">Phone <span class="req">*</span></label><input type="tel" id="phone" name="phone" required autocomplete="tel"></div>
-          </div>
-          <div class="form-row">
-            <div class="field"><label for="website">Website</label><input type="url" id="website" name="website" placeholder="Optional" autocomplete="url"></div>
-            <div class="field">
-              <label for="practice-type">Practice Type <span class="req">*</span></label>
-              <select id="practice-type" name="practice-type" required>
-                <option value="" selected disabled>Select one</option>
-                {options}
-              </select>
+
+          <form class="lead-form" id="lead-form" novalidate>
+            <div class="form-row">
+              <div class="field"><label for="name">Name <span class="req">*</span></label><input type="text" id="name" name="name" required autocomplete="name"></div>
+              <div class="field"><label for="business">Business <span class="req">*</span></label><input type="text" id="business" name="business" required autocomplete="organization"></div>
             </div>
-          </div>
-          <div class="field"><label for="challenge">Biggest Growth Challenge</label><textarea id="challenge" name="challenge" rows="3" placeholder="Optional"></textarea></div>
-          <button type="submit" class="btn btn-primary btn-full">Confirm &amp; Book</button>
-          <!-- DEV NOTE (not shown to visitors): this form currently submits locally only.
-               Wire the action above to a CRM/Zapier endpoint (and/or embed a scheduler here)
-               once a real integration exists. See content.py BOOKING_HREF for the CTA target. -->
-        </form>
-
-        <div class="form-success" id="form-success" hidden>
-          <h3>Thanks. You're almost done.</h3>
-          <p>In the live version, a scheduler will appear here so you can pick a time immediately.</p>
+            <div class="form-row">
+              <div class="field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" required autocomplete="email"></div>
+              <div class="field"><label for="phone">Phone <span class="req">*</span></label><input type="tel" id="phone" name="phone" required autocomplete="tel"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="website">Website</label><input type="url" id="website" name="website" placeholder="Optional" autocomplete="url"></div>
+              <div class="field">
+                <label for="practice-type">Practice Type <span class="req">*</span></label>
+                <select id="practice-type" name="practice-type" required>
+                  <option value="" selected disabled>Select one</option>
+                  {options}
+                </select>
+              </div>
+            </div>
+            <div class="field"><label for="challenge">Biggest Growth Challenge</label><textarea id="challenge" name="challenge" rows="3" placeholder="Optional"></textarea></div>
+            <button type="submit" class="btn btn-primary btn-full">{c.CONFIRM_BUTTON_LABEL}</button>
+            <!-- DEV NOTE (not shown to visitors): this form's details currently stay in the
+                 browser only (used to prefill Calendly in Step 2). Wire the submit handler in
+                 template.js (initBookingFlow) to a real CRM/email endpoint once one exists, so
+                 practice details are captured even if a visitor doesn't finish scheduling. -->
+          </form>
         </div>
+
+        <div class="booking-step" id="booking-step-schedule" hidden tabindex="-1">
+          <div class="section-head">
+            <h2>{c.SCHEDULING_HEADLINE}</h2>
+            <p class="section-intro">{c.SCHEDULING_SUBHEAD}</p>
+          </div>
+          <div class="calendly-container calendly-inline-widget" id="calendly-container">
+            <p class="calendly-loading-note">Loading the scheduler&hellip;</p>
+          </div>
+          <div class="calendly-fallback" id="calendly-fallback" hidden>
+            <p class="calendly-fallback-text">Having trouble loading the scheduler above?</p>
+            <a href="{c.CALENDLY_URL}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary calendly-fallback-btn">Open Scheduler in a New Tab</a>
+          </div>
+        </div>
+
+        <div class="form-success booking-step" id="booking-step-confirmed" hidden tabindex="-1">
+          <h3>{c.CONFIRMATION_HEADLINE}</h3>
+          <p>{c.CONFIRMATION_TEXT}</p>
+        </div>
+
       </div>
     </section>
   </main>
+
+<!-- Calendly's widget script powers the real inline scheduler in Step 2 above (initBookingFlow
+     in template.js calls window.Calendly.initInlineWidget once the lead form validates).
+     onerror sets a flag so initBookingFlow can show the fallback link immediately if the
+     script itself is blocked (ad blocker, corporate network) rather than waiting out the
+     full timeout meant for "script loaded but the embed still didn't render" cases. -->
+<script src="https://assets.calendly.com/assets/external/widget.js" onerror="window.__calendlyLoadFailed = true;"></script>
 """
 
 
@@ -512,6 +518,20 @@ def render_back_to_top():
   <button id="back-to-top" class="back-to-top" aria-label="Back to top">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
+"""
+
+
+def render_floating_cta():
+    # Small floating pill, fixed to the viewport. JS (initFloatingCta in
+    # template.js) toggles .is-visible: hidden until the visitor scrolls
+    # past the hero, and hidden again once the final-CTA/booking area
+    # scrolls into view, so it never competes with the "Book a Strategy
+    # Call" buttons already there. Positioned above #back-to-top so the
+    # two never overlap.
+    return f"""
+  <a href="{c.BOOKING_HREF}" class="floating-cta" id="floating-cta">
+    <span>{c.PRIMARY_CTA_LABEL}</span>
+  </a>
 """
 
 
@@ -590,9 +610,7 @@ def render_footer():
     </div>
   </footer>
 
-  <script>
-{JS}
-  </script>
+{'<script src="script.js"></script>' if DEPLOY else f'<script>{chr(10)}{JS}{chr(10)}</script>'}
 </body>
 </html>
 """
@@ -606,18 +624,32 @@ def build():
         render_how_it_works(),
         render_services(),
         render_who_we_serve(),
-        render_results(),
-        render_about(),
+        render_results_and_about(),
         render_faq(),
         render_booking(),
         render_back_to_top(),
+        render_floating_cta(),
         render_footer(),
     ]
     output = "".join(parts)
-    out_path = os.path.join(ROOT, "index.html")
-    with open(out_path, "w") as f:
-        f.write(output)
-    print(f"Built index.html ({len(output):,} bytes) from content.py + template.css + template.js")
+
+    if DEPLOY:
+        os.makedirs(OUT_DIR, exist_ok=True)
+        os.makedirs(os.path.join(OUT_DIR, "assets"), exist_ok=True)
+        with open(os.path.join(OUT_DIR, "index.html"), "w") as f:
+            f.write(output)
+        with open(os.path.join(OUT_DIR, "styles.css"), "w") as f:
+            f.write(CSS)
+        with open(os.path.join(OUT_DIR, "script.js"), "w") as f:
+            f.write(JS)
+        shutil.copyfile(os.path.join(ROOT, "assets/logo.png"), os.path.join(OUT_DIR, "assets/logo.png"))
+        shutil.copyfile(os.path.join(ROOT, "assets/favicon.png"), os.path.join(OUT_DIR, "assets/favicon.png"))
+        print(f"Built deploy bundle in {OUT_DIR} (index.html, styles.css, script.js, assets/)")
+    else:
+        out_path = os.path.join(ROOT, "index.html")
+        with open(out_path, "w") as f:
+            f.write(output)
+        print(f"Built index.html ({len(output):,} bytes) from content.py + template.css + template.js")
 
 
 if __name__ == "__main__":

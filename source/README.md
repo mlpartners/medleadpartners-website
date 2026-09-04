@@ -101,14 +101,42 @@ Python functions in `build.py` (`render_system_flow_graphic`,
 They're plain shapes (circles, lines, rects) in
 the brand's two colors, no image files, nothing that can 404.
 
-**External dependencies.** There is exactly one: a `<link>` to
-`fonts.googleapis.com`/`fonts.gstatic.com` to load Montserrat. This
-requires the visitor to have internet access; if that's ever a concern,
-the font-family fallback stack (`-apple-system, BlinkMacSystemFont,
-sans-serif`) is already in place in `template.css` and the site remains
-fully usable without Google Fonts loading, just in a different typeface.
-Nothing else — no analytics, no tracking pixels, no third-party scripts —
+**External dependencies.** Two: a `<link>` to
+`fonts.googleapis.com`/`fonts.gstatic.com` to load Montserrat (the
+font-family fallback stack already in `template.css` keeps the site fully
+usable if that doesn't load), and Calendly's `widget.css` + `widget.js`
+(loaded from `assets.calendly.com`), which power the real inline
+scheduler in the booking flow (see "The booking flow" below). Nothing
+else — no analytics, no tracking pixels, no other third-party scripts —
 is present anywhere in the code.
+
+## The booking flow (real Calendly integration)
+
+The `#book` section at the bottom of the page is three mutually-exclusive
+steps, shown one at a time (`template.js` → `initBookingFlow`):
+
+1. **Form** (`#booking-step-form`) — the contact form. Submitting it
+   never claims a meeting is booked; it only validates and moves to step 2.
+2. **Schedule** (`#booking-step-schedule`) — the real MedLead Partners
+   Calendly page (`content.py` → `CALENDLY_URL`), embedded inline via
+   Calendly's own `Calendly.initInlineWidget()` API and prefilled with the
+   name/email just entered. The embed listens for Calendly's
+   `calendly.page_height` messages and resizes itself to fit whatever
+   Calendly is currently showing (the profile page, an event type, the
+   date picker, etc.) — this is done manually in `template.js` because
+   Calendly's own auto-resize only covers widgets it scans on page load,
+   not ones created dynamically the way this flow does.
+3. **Confirmed** (`#booking-step-confirmed`) — shown *only* when Calendly
+   fires `calendly.event_scheduled` on the `window` message channel. This
+   is the one and only signal the site treats as an actual booked
+   meeting; simply opening the scheduler in step 2 never triggers it.
+
+To point the site at a different Calendly page later, change
+`CALENDLY_URL` in `content.py` and rebuild — nothing else needs to change.
+
+If the widget script fails to load for some reason, a plain "open it in a
+new tab" fallback link (`#calendly-fallback`) appears automatically after
+8 seconds so a visitor is never stuck looking at a blank box.
 
 ## How to make a change
 
@@ -134,6 +162,21 @@ function that reads its content from `content.py`).
 If Python isn't available wherever you're editing, `index.html` can also be
 hand-edited directly — it's plain HTML/CSS/JS with no build tooling required
 to run it, only to regenerate it cleanly from source.
+
+## Two build modes
+
+`python3 build.py` (no arguments) rebuilds the self-contained `index.html`
+in this folder, exactly as described above.
+
+`python3 build.py --deploy <output-folder>` builds the plain static
+deployment bundle instead: `index.html` + `styles.css` + `script.js` as
+real linked files, plus `assets/logo.png` and `assets/favicon.png` as real
+image files, all written into `<output-folder>`. This is what you'd
+actually upload to a host (see the deployment package's own README for
+hosting instructions). Both modes render from the exact same
+`content.py` / `build.py` / `template.css` / `template.js`, so a content
+or behavior change only ever needs to be made once and both outputs stay
+in sync.
 
 ## Testimonials and case studies
 

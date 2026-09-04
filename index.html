@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MedLead Partners | Patient Acquisition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Home - MedLead Partners</title>
 <meta name="description" content="MedLead Partners generates new patient leads through paid advertising and runs the system that captures, qualifies, follows up with, and moves those leads toward an appointment.">
 
 <!-- Open Graph / social link preview foundation.
@@ -24,6 +24,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Calendly's stylesheet for the real, inline scheduling widget used in the
+     booking flow (see #book section). This is the one additional external
+     dependency the real Calendly integration requires. -->
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -59,22 +63,14 @@
     <section class="hero" id="home" data-nav-section>
       <div class="hero-watermark" aria-hidden="true">+</div>
       <div class="container hero-inner">
-        <h1>We generate the leads. We run the system behind them.</h1>
-        <p class="hero-sub">MedLead Partners generates new patient leads through paid advertising and runs the system that captures, qualifies, follows up with, and moves those leads toward an appointment.</p>
+        <h1>Patient Acquisition, From Click to Appointment</h1>
+        <p class="hero-sub">We generate the leads. We build the system that converts them.</p>
         <div class="hero-actions">
           <!-- CTA target comes from content.py's BOOKING_HREF. It currently points to the
                in-page booking form at #book, which is live and functional now. Update
                BOOKING_HREF in content.py once a real Calendly/booking URL exists. -->
           <a href="#book" class="btn btn-primary">Book a Strategy Call</a>
-          <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
         </div>
-      </div>
-    </section>
-
-    <section class="core-idea">
-      <div class="container">
-        <p class="statement">Generating a lead is only the beginning.</p>
-        <p class="section-intro">The real opportunity is what happens after the inquiry comes in. We do not stop at generating the inquiry. We build and run the process that moves it forward.</p>
       </div>
     </section>
 
@@ -97,43 +93,6 @@
         <div class="stage-panel">
           <div class="stage-panel-title" id="stage-panel-title">Paid Advertising</div>
           <p class="stage-panel-text" id="stage-panel-text">We create and manage paid campaigns designed to put your practice in front of prospective patients.</p>
-        </div>
-
-        <div class="process-block">
-          <h3 class="process-heading">How we get started</h3>
-          <ol class="process-list">
-            <li><span class="process-num">1</span><div><h3>Strategy call</h3><p>We learn your practice, your numbers, and your constraints.</p></div></li>
-          <li><span class="process-num">2</span><div><h3>Setup</h3><p>Campaigns, forms, and qualification rules built around your practice.</p></div></li>
-          <li><span class="process-num">3</span><div><h3>Launch</h3><p>Campaigns go live and new leads enter the acquisition and follow-up system.</p></div></li>
-          <li><span class="process-num">4</span><div><h3>Optimize</h3><p>Ongoing reporting and adjustment based on real performance.</p></div></li>
-          </ol>
-        </div>
-
-        <div class="tech-strip">
-          <div class="graphic-panel"><svg viewBox="0 0 320 170" class="flow-graphic" role="img" aria-label="Abstract diagram of the acquisition system trending upward from traffic to booked patient">
-        <rect x="252" y="118" width="10" height="34" rx="1.5" fill="#6893EF" opacity="0.18"/>
-        <rect x="268" y="98" width="10" height="54" rx="1.5" fill="#6893EF" opacity="0.28"/>
-        <rect x="284" y="76" width="10" height="76" rx="1.5" fill="#6893EF" opacity="0.4"/>
-        <path d="M28 132 L78 116 L128 98 L178 82 L228 62 L278 40" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="28" cy="132" r="5" fill="#000"/>
-        <circle cx="78" cy="116" r="5" fill="#000"/>
-        <circle cx="128" cy="98" r="5" fill="#000"/>
-        <circle cx="178" cy="82" r="5" fill="#000"/>
-        <circle cx="228" cy="62" r="5" fill="#000"/>
-        <circle cx="278" cy="40" r="6" fill="#6893EF"/>
-      </svg></div>
-          <div class="tech-strip-info">
-            <p class="tech-stack-label">Runs on modern marketing, CRM, automation, scheduling, and analytics infrastructure.</p>
-            <div class="badge-row">
-              <span class="badge-chip">Paid Advertising</span>
-            <span class="badge-chip">Lead Generation</span>
-            <span class="badge-chip">Performance Analytics</span>
-            <span class="badge-chip">Marketing Automation</span>
-            <span class="badge-chip">Lead Qualification</span>
-            <span class="badge-chip">Appointment Scheduling</span>
-            <span class="badge-chip">Analytics &amp; Reporting</span>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -199,11 +158,11 @@
       </div>
     </section>
 
-    <section class="section" id="results" data-nav-section>
+    <section class="section">
       <div class="container">
-        <div class="section-head">
+        <div id="results" class="section-head" data-nav-section>
           <h2 class="marker"><span class="plus">+</span> Results</h2>
-          <p class="section-intro">We monitor the entire acquisition process so we can see what is working and where opportunities are being lost. Real case studies will be added here as client results are verified.</p>
+          <p class="section-intro">We monitor the acquisition process end to end. Verified case studies will appear here as client results come in.</p>
         </div>
 
         <h3 class="track-heading">What we track</h3>
@@ -215,33 +174,14 @@
           <div class="track-item"><div class="track-label">Funnel Performance</div><p class="track-text">Where opportunities move forward and where they drop off.</p></div>
         </div>
 
+        <p class="proof-note">Verified case studies will appear here as client results come in.</p>
+        <div class="proof-single"></div>
+
         <div class="results-divider"></div>
 
-        <p class="proof-note">Verified case studies will appear here as client results come in.</p>
-        <div class="proof-single"><figure class="testimonial-card sample-testimonial">
-          <span class="case-tag">Sample client feedback: illustrative, not a verified review</span>
-          <blockquote>&ldquo;MedLead Partners helped us bring more structure to the way we handled incoming leads. The biggest difference was having a system for qualification, follow-up, and getting qualified prospects onto the calendar.&rdquo;</blockquote>
-          <figcaption>
-            <div>
-              <div class="testimonial-name">Dr. Lauren Hayes, MD</div>
-              <div class="testimonial-role">Medical Director, Aesthetic Medicine</div>
-              <div class="testimonial-disclaimer">Illustrative Client. Sample Only.</div>
-            </div>
-          </figcaption>
-        </figure></div>
-      </div>
-    </section>
-
-    <section class="section section-tint" id="about" data-nav-section>
-      <div class="container">
-        <div class="section-head">
+        <div id="about" class="section-head" data-nav-section>
           <h2 class="marker"><span class="plus">+</span> About</h2>
-          <p class="section-intro">MedLead Partners was built around a simple observation: generating an inquiry is only the beginning.</p>
-        </div>
-        <div class="three-col why-list">
-          <div><h3>What we connect</h3><p>Paid advertising, lead capture, qualification, follow-up, appointment booking, and reporting. All connected in one acquisition system.</p></div>
-          <div><h3>What we believe</h3><p>When advertising, lead capture, follow-up, qualification, scheduling, and reporting operate separately, opportunities get lost between the steps. We build and run systems that connect those pieces.</p></div>
-          <div><h3>Our commitment</h3><p>We measure more than lead volume. We look at what happens from the initial inquiry through qualification, follow-up, and appointment booking.</p></div>
+          <p class="section-intro">MedLead Partners was built around a simple observation: generating an inquiry is only the beginning. We connect paid advertising, lead capture, qualification, follow-up, appointment booking, and reporting into one system, so opportunities never get lost between the steps.</p>
         </div>
       </div>
     </section>
@@ -254,27 +194,11 @@
         <div class="reveal-list no-nums" data-single-open>
           <div class="reveal-item">
             <button class="reveal-trigger" aria-expanded="false"><span class="reveal-label">What does MedLead Partners actually do?</span><span class="reveal-icon" aria-hidden="true"></span></button>
-            <div class="reveal-panel"><div class="reveal-panel-inner"><p>We generate new patient leads through paid advertising and run the acquisition system around those leads. That includes lead capture, structural qualification, follow-up, appointment booking, and performance reporting. We are not simply managing leads your practice has already generated. We build and operate the acquisition process that generates and moves those opportunities forward.</p></div></div>
-          </div>
-          <div class="reveal-item">
-            <button class="reveal-trigger" aria-expanded="false"><span class="reveal-label">Do you run the advertising?</span><span class="reveal-icon" aria-hidden="true"></span></button>
-            <div class="reveal-panel"><div class="reveal-panel-inner"><p>Yes. Paid advertising is part of the acquisition system we build and manage.</p></div></div>
-          </div>
-          <div class="reveal-item">
-            <button class="reveal-trigger" aria-expanded="false"><span class="reveal-label">Do you only provide leads?</span><span class="reveal-icon" aria-hidden="true"></span></button>
-            <div class="reveal-panel"><div class="reveal-panel-inner"><p>No. The goal is not simply to deliver a list of leads. We build and run the system around the acquisition process, from paid traffic through lead capture, qualification, follow-up, and appointment booking.</p></div></div>
+            <div class="reveal-panel"><div class="reveal-panel-inner"><p>We generate new patient leads through paid advertising and run the acquisition system around those leads: lead capture, structural qualification, follow-up, appointment booking, and performance reporting. We are not simply managing leads your practice has already generated.</p></div></div>
           </div>
           <div class="reveal-item">
             <button class="reveal-trigger" aria-expanded="false"><span class="reveal-label">How do you qualify leads?</span><span class="reveal-icon" aria-hidden="true"></span></button>
             <div class="reveal-panel"><div class="reveal-panel-inner"><p>Structurally only. We check location, insurance status, and availability against your practice's own rules. We never apply medical judgment.</p></div></div>
-          </div>
-          <div class="reveal-item">
-            <button class="reveal-trigger" aria-expanded="false"><span class="reveal-label">Do you handle follow-up?</span><span class="reveal-icon" aria-hidden="true"></span></button>
-            <div class="reveal-panel"><div class="reveal-panel-inner"><p>Yes. New leads enter a structured follow-up process so opportunities do not get lost after the initial inquiry.</p></div></div>
-          </div>
-          <div class="reveal-item">
-            <button class="reveal-trigger" aria-expanded="false"><span class="reveal-label">Do you handle appointment booking?</span><span class="reveal-icon" aria-hidden="true"></span></button>
-            <div class="reveal-panel"><div class="reveal-panel-inner"><p>Yes. Qualified, followed-up leads are moved toward a scheduled consultation through your practice's own booking process.</p></div></div>
           </div>
           <div class="reveal-item">
             <button class="reveal-trigger" aria-expanded="false"><span class="reveal-label">Do you replace our medical or front-office team?</span><span class="reveal-icon" aria-hidden="true"></span></button>
@@ -288,10 +212,6 @@
             <button class="reveal-trigger" aria-expanded="false"><span class="reveal-label">Who is MedLead Partners designed for?</span><span class="reveal-icon" aria-hidden="true"></span></button>
             <div class="reveal-panel"><div class="reveal-panel-inner"><p>Medical practices, med spas, plastic surgery, dental practices, and aesthetic or elective care businesses. Practices where a booked patient has clear, defined value.</p></div></div>
           </div>
-          <div class="reveal-item">
-            <button class="reveal-trigger" aria-expanded="false"><span class="reveal-label">How does the strategy process work?</span><span class="reveal-icon" aria-hidden="true"></span></button>
-            <div class="reveal-panel"><div class="reveal-panel-inner"><p>It starts with a strategy call to learn your practice and its constraints. From there we handle setup, launch, and ongoing optimization based on real performance.</p></div></div>
-          </div>
         </div>
       </div>
     </section>
@@ -299,59 +219,96 @@
     <section class="final-cta">
       <div class="container">
         <h2>See what a full-funnel system looks like for your practice.</h2>
-        <a href="#book" class="btn btn-light">Book a Strategy Call</a>
       </div>
     </section>
 
-    <section class="section section-tint" id="book">
+    <!-- Booking flow: three mutually-exclusive steps, one visible at a time.
+         Only #booking-step-form is ever a claim-free contact form. Step 2
+         opens the REAL Calendly scheduler (content.py CALENDLY_URL) inline;
+         opening it is not a booking confirmation. Step 3 (the only step
+         that says a call is scheduled) renders only after Calendly itself
+         fires "calendly.event_scheduled" — see initBookingFlow() in
+         template.js. data-calendly-url is the single source of truth the
+         JS reads from, so the URL only has to change in content.py. -->
+    <section class="section section-tint" id="book" data-calendly-url="https://calendly.com/medleadpartners">
       <div class="container container-narrow">
-        <div class="section-head">
-          <h2>Book a Strategy Call</h2>
-          <p class="section-intro">Tell us a bit about your practice. We'll come to the call ready to talk specifics.</p>
-        </div>
 
-        <form class="lead-form" id="lead-form" novalidate>
-          <div class="form-row">
-            <div class="field"><label for="name">Name <span class="req">*</span></label><input type="text" id="name" name="name" required autocomplete="name"></div>
-            <div class="field"><label for="business">Business <span class="req">*</span></label><input type="text" id="business" name="business" required autocomplete="organization"></div>
+        <div class="booking-step" id="booking-step-form">
+          <div class="section-head">
+            <h2>Book a Strategy Call</h2>
+            <p class="section-intro">Tell us a bit about your practice. We'll come to the call ready to talk specifics.</p>
           </div>
-          <div class="form-row">
-            <div class="field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" required autocomplete="email"></div>
-            <div class="field"><label for="phone">Phone <span class="req">*</span></label><input type="tel" id="phone" name="phone" required autocomplete="tel"></div>
-          </div>
-          <div class="form-row">
-            <div class="field"><label for="website">Website</label><input type="url" id="website" name="website" placeholder="Optional" autocomplete="url"></div>
-            <div class="field">
-              <label for="practice-type">Practice Type <span class="req">*</span></label>
-              <select id="practice-type" name="practice-type" required>
-                <option value="" selected disabled>Select one</option>
-                <option value="medical">Medical Practice</option>
+
+          <form class="lead-form" id="lead-form" novalidate>
+            <div class="form-row">
+              <div class="field"><label for="name">Name <span class="req">*</span></label><input type="text" id="name" name="name" required autocomplete="name"></div>
+              <div class="field"><label for="business">Business <span class="req">*</span></label><input type="text" id="business" name="business" required autocomplete="organization"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" required autocomplete="email"></div>
+              <div class="field"><label for="phone">Phone <span class="req">*</span></label><input type="tel" id="phone" name="phone" required autocomplete="tel"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="website">Website</label><input type="url" id="website" name="website" placeholder="Optional" autocomplete="url"></div>
+              <div class="field">
+                <label for="practice-type">Practice Type <span class="req">*</span></label>
+                <select id="practice-type" name="practice-type" required>
+                  <option value="" selected disabled>Select one</option>
+                  <option value="medical">Medical Practice</option>
                 <option value="med-spa">Med Spa</option>
                 <option value="plastic-surgery">Plastic Surgery</option>
                 <option value="dental">Dental Practice</option>
                 <option value="aesthetic-elective">Aesthetic &amp; Elective Care</option>
                 <option value="other">Other</option>
-              </select>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="field"><label for="challenge">Biggest Growth Challenge</label><textarea id="challenge" name="challenge" rows="3" placeholder="Optional"></textarea></div>
-          <button type="submit" class="btn btn-primary btn-full">Confirm &amp; Book</button>
-          <!-- DEV NOTE (not shown to visitors): this form currently submits locally only.
-               Wire the action above to a CRM/Zapier endpoint (and/or embed a scheduler here)
-               once a real integration exists. See content.py BOOKING_HREF for the CTA target. -->
-        </form>
-
-        <div class="form-success" id="form-success" hidden>
-          <h3>Thanks. You're almost done.</h3>
-          <p>In the live version, a scheduler will appear here so you can pick a time immediately.</p>
+            <div class="field"><label for="challenge">Biggest Growth Challenge</label><textarea id="challenge" name="challenge" rows="3" placeholder="Optional"></textarea></div>
+            <button type="submit" class="btn btn-primary btn-full">Confirm &amp; Book</button>
+            <!-- DEV NOTE (not shown to visitors): this form's details currently stay in the
+                 browser only (used to prefill Calendly in Step 2). Wire the submit handler in
+                 template.js (initBookingFlow) to a real CRM/email endpoint once one exists, so
+                 practice details are captured even if a visitor doesn't finish scheduling. -->
+          </form>
         </div>
+
+        <div class="booking-step" id="booking-step-schedule" hidden tabindex="-1">
+          <div class="section-head">
+            <h2>Choose a Time</h2>
+            <p class="section-intro">Thanks — your details are saved. Pick a time below to confirm your strategy call.</p>
+          </div>
+          <div class="calendly-container calendly-inline-widget" id="calendly-container">
+            <p class="calendly-loading-note">Loading the scheduler&hellip;</p>
+          </div>
+          <div class="calendly-fallback" id="calendly-fallback" hidden>
+            <p class="calendly-fallback-text">Having trouble loading the scheduler above?</p>
+            <a href="https://calendly.com/medleadpartners" target="_blank" rel="noopener noreferrer" class="btn btn-secondary calendly-fallback-btn">Open Scheduler in a New Tab</a>
+          </div>
+        </div>
+
+        <div class="form-success booking-step" id="booking-step-confirmed" hidden tabindex="-1">
+          <h3>Strategy Call Scheduled</h3>
+          <p>Your strategy call with MedLead Partners has been scheduled. We'll see you then.</p>
+        </div>
+
       </div>
     </section>
   </main>
 
+<!-- Calendly's widget script powers the real inline scheduler in Step 2 above (initBookingFlow
+     in template.js calls window.Calendly.initInlineWidget once the lead form validates).
+     onerror sets a flag so initBookingFlow can show the fallback link immediately if the
+     script itself is blocked (ad blocker, corporate network) rather than waiting out the
+     full timeout meant for "script loaded but the embed still didn't render" cases. -->
+<script src="https://assets.calendly.com/assets/external/widget.js" onerror="window.__calendlyLoadFailed = true;"></script>
+
   <button id="back-to-top" class="back-to-top" aria-label="Back to top">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
+
+  <a href="#book" class="floating-cta" id="floating-cta">
+    <span>Book a Strategy Call</span>
+  </a>
 
   <footer class="site-footer">
     <div class="container">
@@ -359,7 +316,7 @@
         <div class="footer-brand-block">
           <img src="assets/logo.png" alt="MedLead Partners logo" class="footer-logo-lg">
           <p class="footer-tagline">Patient acquisition, run as one system.</p>
-          
+          <div class="footer-contact-line"><a href="mailto:info@medleadpartners.com">info@medleadpartners.com</a></div>
           <div class="footer-social"><a href="https://www.instagram.com/medleadpartners/" class="footer-social-icon" target="_blank" rel="noopener noreferrer" aria-label="MedLead Partners on Instagram"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.6" stroke="currentColor" stroke-width="1.8"/><circle cx="17.3" cy="6.7" r="1.15" fill="currentColor"/></svg></a></div>
         </div>
         <div class="footer-cta-block">
@@ -381,6 +338,6 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

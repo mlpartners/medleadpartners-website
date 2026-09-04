@@ -21,8 +21,8 @@
   --radius: 10px;
   --radius-sm: 6px;
 
-  --section-pad: clamp(72px, 10vw, 140px);
-  --section-pad-mobile: 56px;
+  --section-pad: clamp(36px, 4.5vw, 64px);
+  --section-pad-mobile: 32px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -132,24 +132,16 @@ p { color: var(--slate); font-size: 17px; }
    HERO (homepage)
    ========================================================================== */
 
-.hero { position: relative; padding: clamp(90px, 14vw, 160px) 0 clamp(70px, 10vw, 120px); overflow: hidden; }
+.hero { position: relative; padding: clamp(44px, 6vw, 80px) 0 clamp(32px, 4vw, 56px); overflow: hidden; }
 .hero-watermark {
   position: absolute; top: 50%; right: -6%; transform: translateY(-50%);
   font-size: min(46vw, 620px); font-weight: 700; color: var(--off-white);
   line-height: 1; z-index: 0; pointer-events: none; user-select: none;
 }
 .hero-inner { position: relative; z-index: 1; max-width: 900px; }
-.hero h1 { margin-bottom: 24px; }
-.hero-sub { font-size: 19px; max-width: 620px; margin-bottom: 36px; }
+.hero h1 { margin-bottom: 18px; }
+.hero-sub { font-size: 18px; max-width: 620px; margin-bottom: 26px; }
 .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
-
-/* ==========================================================================
-   CORE IDEA
-   ========================================================================== */
-
-.core-idea { padding: 0 0 var(--section-pad); }
-.core-idea .statement { font-size: clamp(26px, 3.6vw, 44px); font-weight: 600; line-height: 1.25; max-width: 780px; }
-.core-idea p.section-intro { margin-top: 22px; }
 
 /* ==========================================================================
    SECTIONS (shared)
@@ -157,13 +149,13 @@ p { color: var(--slate); font-size: 17px; }
 
 .section { padding: var(--section-pad) 0; }
 .section-tint { background: var(--off-white); }
-.section-head { margin-bottom: 48px; }
+.section-head { margin-bottom: 22px; }
 
 /* ==========================================================================
    SYSTEM — interactive stage selector
    ========================================================================== */
 
-.stage-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 44px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+.stage-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
 .stage-tab {
   padding: 14px 4px; margin-right: 28px; font-size: 16px; font-weight: 600;
   color: var(--slate); border-bottom: 2px solid transparent; position: relative; top: 1px;
@@ -174,13 +166,10 @@ p { color: var(--slate); font-size: 17px; }
 .stage-tab.is-active .num { color: var(--blue); }
 .stage-tab:hover { color: var(--black); }
 
-.stage-panel { margin-top: 36px; min-height: 90px; }
+.stage-panel { margin-top: 22px; min-height: 90px; }
 .stage-panel-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
 .stage-panel-text { font-size: 18px; max-width: 620px; }
 .system-more { margin-top: 32px; display: inline-block; }
-
-.process-block { margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--border); }
-.process-heading { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
 
 /* Shared panel treatment for every custom brand graphic on the site —
    How It Works, Services, Who We Serve, Results all use this same frame
@@ -191,29 +180,21 @@ p { color: var(--slate); font-size: 17px; }
 }
 .graphic-panel svg { width: 100%; height: auto; display: block; }
 
-/* Technology strip within How It Works — small, understated, not a
-   standalone section. Custom abstract graphic + capability badges. */
-.tech-strip {
-  margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--border);
-  display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 48px; align-items: center;
-}
-.tech-stack-label { font-size: 15.5px; color: var(--slate); margin-bottom: 18px; max-width: 440px; }
-
 /* Generic header-split layout — section intro/heading alongside a small
    custom graphic. Used by Services, Who We Serve, and Results so every
    section-level graphic sits in the same place, at the same size. */
-.head-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; margin-bottom: 40px; }
+.head-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; align-items: center; margin-bottom: 20px; }
 .head-split-visual { max-width: 260px; }
 
 /* What We Run: acquisition-path graphic beside a stacked column of
    service pills. Both columns are vertical lists of comparable height
    so the two sides read as one balanced composition. */
 .services-system {
-  margin-top: 48px; display: grid; grid-template-columns: 0.9fr 1.1fr;
-  gap: 48px; align-items: center;
+  margin-top: 22px; display: grid; grid-template-columns: 0.9fr 1.1fr;
+  gap: 28px; align-items: center;
 }
-.services-system-visual { max-width: 300px; margin: 0 auto; }
-.services-system-visual svg { max-height: 340px; }
+.services-system-visual { max-width: 240px; margin: 0 auto; }
+.services-system-visual svg { max-height: 260px; }
 
 /* Purely informational, not interactive: no border box, no hover state,
    no cursor change. A thin divider between rows (not a box around each
@@ -224,7 +205,7 @@ p { color: var(--slate); font-size: 17px; }
 .service-pills { display: flex; flex-direction: column; }
 .service-pill {
   display: flex; align-items: center; gap: 12px;
-  padding: 15px 0;
+  padding: 11px 0;
   border-bottom: 1px solid var(--border);
   color: var(--black);
   font-size: 15px; font-weight: 600;
@@ -240,7 +221,7 @@ p { color: var(--slate); font-size: 17px; }
 .reveal-item { border-bottom: 1px solid var(--border); }
 .reveal-trigger {
   width: 100%; display: flex; align-items: center; justify-content: space-between;
-  padding: 26px 4px; text-align: left; font-size: 20px; font-weight: 600; color: var(--black);
+  padding: 13px 4px; text-align: left; font-size: 17px; font-weight: 600; color: var(--black);
   gap: 20px;
 }
 .reveal-trigger .num { color: var(--border); font-weight: 700; font-size: 16px; margin-right: 18px; flex-shrink: 0; }
@@ -301,18 +282,9 @@ p { color: var(--slate); font-size: 17px; }
 .testimonial-logo { height: 20px; margin-left: auto; }
 
 /* ==========================================================================
-   TECHNOLOGY BADGES & SAMPLE TESTIMONIAL
-   Woven into How It Works / Services / Results. Not a standalone section.
+   SAMPLE TESTIMONIAL
+   Woven into Results. Not a standalone section.
    ========================================================================== */
-
-.badge-row { display: flex; flex-wrap: wrap; gap: 10px; }
-.badge-chip {
-  display: inline-flex; align-items: center;
-  padding: 9px 16px; border-radius: 999px;
-  background: rgba(104,147,239,0.10); color: var(--blue-text);
-  font-size: 14px; font-weight: 600; line-height: 1.3;
-}
-.badge-logo { height: 16px; width: auto; margin-right: 8px; display: inline-block; }
 
 .sample-testimonial { border-style: dashed; border-color: #c7cddb; }
 .sample-testimonial .case-tag { margin-bottom: 20px; }
@@ -323,14 +295,14 @@ p { color: var(--slate); font-size: 17px; }
 /* Results: "What we track" is a lightweight, borderless grid, deliberately
    not styled as a case-card so it never competes visually with actual
    proof (case studies, testimonials) below it. */
-.track-heading { font-size: 18px; font-weight: 600; margin-top: 40px; margin-bottom: 20px; }
-.track-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+.track-heading { font-size: 16px; font-weight: 600; margin-top: 16px; margin-bottom: 12px; }
+.track-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
 .track-label { font-size: 14.5px; font-weight: 700; color: var(--black); margin-bottom: 6px; }
 .track-text { font-size: 13.5px; color: var(--slate); line-height: 1.5; }
 
-.results-divider { border-top: 1px solid var(--border); margin: 40px 0; }
+.results-divider { border-top: 1px solid var(--border); margin: 20px 0; }
 
-.proof-note { font-size: 15px; color: var(--slate); margin-bottom: 20px; }
+.proof-note { font-size: 14px; color: var(--slate); margin-bottom: 0; }
 .proof-single .testimonial-card { max-width: 480px; }
 
 /* Who We Serve: clickable practice-type pills, single shared panel below.
@@ -340,9 +312,9 @@ p { color: var(--slate); font-size: 17px; }
    A 3-column grid (rather than flex-wrap) gives a deliberate 3-then-2
    arrangement for five items instead of an organic, text-length-driven
    wrap, so the layout feels designed rather than incidental. */
-.practice-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 48px; }
+.practice-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 22px; }
 .practice-pill {
-  padding: 11px 20px; border-radius: 999px; text-align: center;
+  padding: 9px 18px; border-radius: 999px; text-align: center;
   border: 1px solid var(--border); background: var(--white);
   font-size: 14.5px; font-weight: 600; color: var(--black);
   transition: border-color .15s ease, background-color .15s ease, color .15s ease;
@@ -350,7 +322,7 @@ p { color: var(--slate); font-size: 17px; }
 .practice-pill:hover { border-color: var(--blue); }
 .practice-pill.is-active { background: var(--blue); border-color: var(--blue); color: #000; }
 
-.practice-panel { margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--border); min-height: 84px; }
+.practice-panel { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); min-height: 70px; }
 .practice-panel-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
 .practice-panel-text { font-size: 16px; max-width: 560px; }
 
@@ -361,8 +333,8 @@ p { color: var(--slate); font-size: 17px; }
    FINAL CTA
    ========================================================================== */
 
-.final-cta { background: var(--blue); padding: 80px 0; text-align: center; }
-.final-cta h2 { max-width: 540px; margin: 0 auto 28px; }
+.final-cta { background: var(--blue); padding: 44px 0; text-align: center; }
+.final-cta h2 { max-width: 540px; margin: 0 auto; }
 
 /* ==========================================================================
    BACK TO TOP
@@ -379,6 +351,27 @@ p { color: var(--slate); font-size: 17px; }
 }
 .back-to-top.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 .back-to-top:hover { border-color: var(--blue); background: var(--off-white); }
+
+/* ==========================================================================
+   FLOATING "BOOK A STRATEGY CALL" CTA
+   Small pill, fixed to the viewport, same visual language as .btn-primary.
+   Sits directly above #back-to-top so the two never overlap.
+   ========================================================================== */
+
+.floating-cta {
+  position: fixed; right: 24px; bottom: 88px; z-index: 95;
+  display: inline-flex; align-items: center;
+  padding: 13px 22px; border-radius: 999px;
+  background: var(--blue); color: var(--black);
+  font-size: 14.5px; font-weight: 600; white-space: nowrap;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 20px rgba(20, 26, 43, 0.18), 0 1px 3px rgba(20, 26, 43, 0.08);
+  opacity: 0; transform: translateY(10px) scale(0.96); pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease, background-color .15s ease, box-shadow .2s ease;
+}
+.floating-cta.is-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.floating-cta:hover { background: var(--blue-dark); box-shadow: 0 10px 26px rgba(20, 26, 43, 0.22), 0 2px 4px rgba(20, 26, 43, 0.1); transform: translateY(-2px); }
+.floating-cta:focus-visible { outline: 2px solid var(--black); outline-offset: 3px; }
 
 /* ==========================================================================
    PAGE HEADER (inner pages)
@@ -418,30 +411,37 @@ p { color: var(--slate); font-size: 17px; }
 .card .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--blue-text); display: block; margin-top: 16px; }
 
 /* ==========================================================================
-   PROCESS (How It Works page)
-   ========================================================================== */
-
-.process-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin: 48px 0 44px; }
-.process-list li { display: flex; flex-direction: column; gap: 14px; }
-.process-num { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--black); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
-.process-list h3 { font-size: 17px; }
-.process-list p { font-size: 15px; }
-
-/* ==========================================================================
    FORM (Booking page)
    ========================================================================== */
 
-.lead-form { margin-top: 40px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.field { margin-bottom: 20px; }
-.field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 7px; }
+.lead-form { margin-top: 20px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 5px; }
 .req { color: var(--blue-text); }
 .field input, .field select, .field textarea {
-  width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
   background: var(--white); transition: border-color .15s ease;
 }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); outline: none; }
-.field textarea { resize: vertical; min-height: 90px; }
+.field textarea { resize: vertical; min-height: 64px; }
+
+/* ---------- Booking flow: form -> schedule -> confirmed ---------- */
+.booking-step[hidden] { display: none; }
+
+.calendly-container {
+  margin-top: 32px; min-height: 700px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--off-white); overflow: hidden; position: relative;
+}
+.calendly-loading-note {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  color: var(--slate); font-size: 14px; text-align: center; width: 100%;
+}
+.calendly-fallback { margin-top: 20px; text-align: center; }
+.calendly-fallback[hidden] { display: none; }
+.calendly-fallback-text { font-size: 14px; color: var(--slate); margin-bottom: 12px; }
+.calendly-fallback-btn { display: inline-flex; }
+
 .form-success { margin-top: 32px; padding: 28px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--off-white); text-align: center; }
 .form-success h3 { margin-bottom: 8px; }
 
@@ -449,11 +449,11 @@ p { color: var(--slate); font-size: 17px; }
    FOOTER
    ========================================================================== */
 
-.site-footer { background: var(--black); color: var(--white); padding: 88px 0 0; }
+.site-footer { background: var(--black); color: var(--white); padding: 56px 0 0; }
 
 .footer-top {
   display: flex; justify-content: space-between; align-items: flex-start;
-  gap: 40px; padding-bottom: 56px;
+  gap: 40px; padding-bottom: 36px;
 }
 .footer-logo-lg { height: 32px; filter: brightness(0) invert(1); margin-bottom: 18px; }
 .footer-tagline { color: rgba(255,255,255,0.55); font-size: 15px; max-width: 300px; }
@@ -479,7 +479,7 @@ p { color: var(--slate); font-size: 17px; }
 
 .footer-nav-row {
   display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
-  padding: 28px 0 44px;
+  padding: 20px 0 28px;
 }
 .footer-nav-row a { font-size: 14.5px; font-weight: 500; color: rgba(255,255,255,0.75); }
 .footer-nav-row a:hover { color: var(--blue); }
@@ -489,7 +489,7 @@ p { color: var(--slate); font-size: 17px; }
 
 .footer-bottom-row {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 24px 0; flex-wrap: wrap; gap: 12px;
+  padding: 18px 0; flex-wrap: wrap; gap: 12px;
 }
 .footer-bottom-row p { color: rgba(255,255,255,0.45); font-size: 13px; }
 .footer-legal { display: flex; gap: 20px; }
@@ -510,10 +510,9 @@ p { color: var(--slate); font-size: 17px; }
   .track-grid { grid-template-columns: repeat(3, 1fr); }
   .tech-strip { grid-template-columns: 1fr; gap: 32px; }
   .head-split { grid-template-columns: 1fr; gap: 28px; }
-  .head-split-visual, .tech-strip .graphic-panel { max-width: 280px; }
+  .head-split-visual { max-width: 280px; }
   .services-system { grid-template-columns: 1fr; gap: 32px; }
   .services-system-visual { max-width: 220px; }
-  .process-list { grid-template-columns: repeat(2, 1fr); gap: 36px 28px; }
   .footer-top { gap: 32px; }
   .hero-watermark { font-size: min(60vw, 480px); right: -12%; opacity: 0.7; }
 }
@@ -528,11 +527,16 @@ p { color: var(--slate); font-size: 17px; }
   .menu-toggle { display: flex; }
 
   .section, .hero, .page-header { padding: var(--section-pad-mobile) 0; }
-  .core-idea { padding-bottom: var(--section-pad-mobile); }
   .final-cta { padding: 56px 0; }
 
-  .three-col, .stage-cards, .card-grid, .process-list, .proof-grid { grid-template-columns: 1fr; gap: 32px; }
+  .three-col, .stage-cards, .card-grid, .proof-grid { grid-template-columns: 1fr; gap: 32px; }
   .track-grid { grid-template-columns: 1fr; gap: 24px; }
+
+  .floating-cta {
+    right: 16px; bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    padding: 11px 18px; font-size: 13.5px;
+  }
+  .back-to-top { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 40px; height: 40px; }
 
   .practice-pill { padding: 10px 16px; font-size: 14px; }
   .practice-pills { grid-template-columns: 1fr; }
@@ -548,6 +552,7 @@ p { color: var(--slate); font-size: 17px; }
   .reveal-trigger .num { margin-right: 12px; }
 
   .form-row { grid-template-columns: 1fr; gap: 0; }
+  .calendly-container { min-height: 580px; }
 
   .footer-top { flex-direction: column; align-items: flex-start; gap: 28px; }
   .footer-cta-block { text-align: left; width: 100%; }

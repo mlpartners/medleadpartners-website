@@ -25,6 +25,12 @@ SITE_DESCRIPTION = (
     "that captures, qualifies, follows up with, and moves those leads toward an appointment."
 )
 
+# The browser tab / <title> element specifically. Kept separate from
+# SITE_TITLE (used for og:title / twitter:title, i.e. social share
+# previews) since the two serve different purposes and a person updating
+# one shouldn't accidentally change the other.
+PAGE_TITLE = "Home - MedLead Partners"
+
 # --------------------------------------------------------------------------
 # NAVIGATION
 # Each tuple is (section_id, label). The section_id must match a real
@@ -42,37 +48,32 @@ NAV = [
 
 PRIMARY_CTA_LABEL = "Book a Strategy Call"
 
-# NOTE: No real booking URL has been provided yet. The CTA below points to the
-# in-page booking form (#book), which is live and functional right now.
-# Once a real Calendly/booking URL exists, replace BOOKING_HREF with it.
-# Every "Book a Strategy Call" button and link on the site reads from this
-# one value, so it only needs to change in this one place.
+# The CTA below points to the in-page booking form (#book). That form is
+# Step 1 of the real booking flow: once submitted, the site opens the real
+# Calendly scheduler inline (see CALENDLY_URL below) rather than claiming a
+# meeting is booked outright. Every "Book a Strategy Call" button/link on
+# the site reads from this one value.
 BOOKING_HREF = "#book"
+
+# --------------------------------------------------------------------------
+# CALENDLY (real scheduling backend for the booking flow)
+#
+# This is the actual MedLead Partners scheduling page. The site never
+# claims a meeting is booked until Calendly itself confirms a scheduled
+# event (see render_booking() in build.py + template.js for the
+# form -> inline Calendly -> confirmation flow).
+# --------------------------------------------------------------------------
+CALENDLY_URL = "https://calendly.com/medleadpartners"
 
 # --------------------------------------------------------------------------
 # HERO
 # --------------------------------------------------------------------------
 
-HERO_HEADLINE = "We generate the leads. We run the system behind them."
-HERO_SUBHEAD = (
-    "MedLead Partners generates new patient leads through paid advertising and runs the system "
-    "that captures, qualifies, follows up with, and moves those leads toward an appointment."
-)
-HERO_SECONDARY_CTA_LABEL = "See How It Works"
-HERO_SECONDARY_CTA_HREF = "#how-it-works"
+HERO_HEADLINE = "Patient Acquisition, From Click to Appointment"
+HERO_SUBHEAD = "We generate the leads. We build the system that converts them."
 
 # --------------------------------------------------------------------------
-# CORE IDEA (the short bridge between hero and How It Works)
-# --------------------------------------------------------------------------
-
-CORE_IDEA_STATEMENT = "Generating a lead is only the beginning."
-CORE_IDEA_SUPPORT = (
-    "The real opportunity is what happens after the inquiry comes in. We do not stop at "
-    "generating the inquiry. We build and run the process that moves it forward."
-)
-
-# --------------------------------------------------------------------------
-# HOW IT WORKS. The 6-stage system (interactive tabs) + onboarding process
+# HOW IT WORKS. The 6-stage system (interactive tabs)
 # --------------------------------------------------------------------------
 
 HOW_IT_WORKS_INTRO = (
@@ -86,36 +87,6 @@ SYSTEM_STAGES = [
     {"num": "04", "title": "Follow-Up", "text": "New leads enter a structured follow-up process so opportunities do not get lost after the initial inquiry."},
     {"num": "05", "title": "Appointment Booking", "text": "We move qualified leads toward a scheduled consultation through the practice's booking process."},
     {"num": "06", "title": "Patient", "text": "Your practice takes over the patient relationship and delivers the care."},
-]
-
-PROCESS_HEADING = "How we get started"
-PROCESS_STEPS = [
-    {"title": "Strategy call", "text": "We learn your practice, your numbers, and your constraints."},
-    {"title": "Setup", "text": "Campaigns, forms, and qualification rules built around your practice."},
-    {"title": "Launch", "text": "Campaigns go live and new leads enter the acquisition and follow-up system."},
-    {"title": "Optimize", "text": "Ongoing reporting and adjustment based on real performance."},
-]
-
-# Technology / capability badges. Rendered as a small, understated strip
-# within the How It Works section (not a standalone section). These are
-# internal capabilities, not third-party certifications, awards,
-# endorsements, or partnerships. No such claims should ever be attached.
-#
-# Each entry has a "logo" field for future use: leave it None to render as
-# a plain text badge (current behavior). Once a real, appropriately-licensed
-# platform logo exists, set logo to an image path/data URI and it will
-# render inside the badge automatically. No redesign needed. Adding a logo
-# here must never imply an official partnership, certification, or
-# endorsement that hasn't actually been established.
-TECH_STACK_LABEL = "Runs on modern marketing, CRM, automation, scheduling, and analytics infrastructure."
-CAPABILITY_BADGES = [
-    {"label": "Paid Advertising", "logo": None},
-    {"label": "Lead Generation", "logo": None},
-    {"label": "Performance Analytics", "logo": None},
-    {"label": "Marketing Automation", "logo": None},
-    {"label": "Lead Qualification", "logo": None},
-    {"label": "Appointment Scheduling", "logo": None},
-    {"label": "Analytics &amp; Reporting", "logo": None},
 ]
 
 # --------------------------------------------------------------------------
@@ -171,11 +142,7 @@ INDUSTRIES = [
 #   image        - optional image path/data URI
 # --------------------------------------------------------------------------
 
-RESULTS_INTRO = (
-    "We monitor the entire acquisition process so we can see what is working and where "
-    "opportunities are being lost. Real case studies will be added here as client results "
-    "are verified."
-)
+RESULTS_INTRO = "We monitor the acquisition process end to end. Verified case studies will appear here as client results come in."
 
 CASE_STUDIES = []  # populate with real, verified case studies only. See schema above.
 
@@ -232,28 +199,18 @@ TESTIMONIALS = []  # populate with real, attributed testimonials only. See schem
 #      (see its schema above it). It will render as a real, unlabeled
 #      testimonial card with no "sample" tag.
 
-SAMPLE_TESTIMONIAL = {
-    "quote": (
-        "MedLead Partners helped us bring more structure to the way we handled incoming "
-        "leads. The biggest difference was having a system for qualification, follow-up, and "
-        "getting qualified prospects onto the calendar."
-    ),
-    "name": "Dr. Lauren Hayes, MD",
-    "title": "Medical Director, Aesthetic Medicine",
-    "disclaimer": "Illustrative Client. Sample Only.",
-}
+SAMPLE_TESTIMONIAL = None
 
 # --------------------------------------------------------------------------
 # ABOUT
 # --------------------------------------------------------------------------
 
-ABOUT_INTRO = "MedLead Partners was built around a simple observation: generating an inquiry is only the beginning."
-
-ABOUT_PILLARS = [
-    {"title": "What we connect", "text": "Paid advertising, lead capture, qualification, follow-up, appointment booking, and reporting. All connected in one acquisition system."},
-    {"title": "What we believe", "text": "When advertising, lead capture, follow-up, qualification, scheduling, and reporting operate separately, opportunities get lost between the steps. We build and run systems that connect those pieces."},
-    {"title": "Our commitment", "text": "We measure more than lead volume. We look at what happens from the initial inquiry through qualification, follow-up, and appointment booking."},
-]
+ABOUT_INTRO = (
+    "MedLead Partners was built around a simple observation: generating an inquiry is only "
+    "the beginning. We connect paid advertising, lead capture, qualification, follow-up, "
+    "appointment booking, and reporting into one system, so opportunities never get lost "
+    "between the steps."
+)
 
 # --------------------------------------------------------------------------
 # FAQ
@@ -263,35 +220,14 @@ FAQ_ITEMS = [
     (
         "What does MedLead Partners actually do?",
         "We generate new patient leads through paid advertising and run the acquisition system "
-        "around those leads. That includes lead capture, structural qualification, follow-up, "
-        "appointment booking, and performance reporting. We are not simply managing leads your "
-        "practice has already generated. We build and operate the acquisition process that "
-        "generates and moves those opportunities forward.",
-    ),
-    (
-        "Do you run the advertising?",
-        "Yes. Paid advertising is part of the acquisition system we build and manage.",
-    ),
-    (
-        "Do you only provide leads?",
-        "No. The goal is not simply to deliver a list of leads. We build and run the system "
-        "around the acquisition process, from paid traffic through lead capture, qualification, "
-        "follow-up, and appointment booking.",
+        "around those leads: lead capture, structural qualification, follow-up, appointment "
+        "booking, and performance reporting. We are not simply managing leads your practice "
+        "has already generated.",
     ),
     (
         "How do you qualify leads?",
         "Structurally only. We check location, insurance status, and availability against your "
         "practice's own rules. We never apply medical judgment.",
-    ),
-    (
-        "Do you handle follow-up?",
-        "Yes. New leads enter a structured follow-up process so opportunities do not get lost "
-        "after the initial inquiry.",
-    ),
-    (
-        "Do you handle appointment booking?",
-        "Yes. Qualified, followed-up leads are moved toward a scheduled consultation through "
-        "your practice's own booking process.",
     ),
     (
         "Do you replace our medical or front-office team?",
@@ -309,11 +245,6 @@ FAQ_ITEMS = [
         "Medical practices, med spas, plastic surgery, dental practices, and aesthetic or "
         "elective care businesses. Practices where a booked patient has clear, defined value.",
     ),
-    (
-        "How does the strategy process work?",
-        "It starts with a strategy call to learn your practice and its constraints. From there we "
-        "handle setup, launch, and ongoing optimization based on real performance.",
-    ),
 ]
 
 # --------------------------------------------------------------------------
@@ -326,7 +257,7 @@ FAQ_ITEMS = [
 
 FOOTER_TAGLINE = "Patient acquisition, run as one system."
 
-CONTACT_EMAIL = None   # e.g. "hello@medleadpartners.com"
+CONTACT_EMAIL = "info@medleadpartners.com"
 CONTACT_PHONE = None   # e.g. "+1 (555) 123-4567"
 
 SOCIAL_LINKS = [
@@ -346,10 +277,27 @@ FINAL_CTA_HEADLINE = "See what a full-funnel system looks like for your practice
 
 # --------------------------------------------------------------------------
 # BOOKING FORM
+#
+# The booking flow has three states, shown one at a time in the #book
+# section (see render_booking() in build.py and initBookingFlow() in
+# template.js):
+#   1. FORM      — lead-form below (BOOKING_HEADLINE / BOOKING_SUBHEAD)
+#   2. SCHEDULE  — the real Calendly inline widget, opened only after the
+#                  form validates (SCHEDULING_HEADLINE / SCHEDULING_SUBHEAD)
+#   3. CONFIRMED — shown only after Calendly fires calendly.event_scheduled,
+#                  never just from opening the scheduler
+#                  (CONFIRMATION_HEADLINE / CONFIRMATION_TEXT)
 # --------------------------------------------------------------------------
 
 BOOKING_HEADLINE = "Book a Strategy Call"
 BOOKING_SUBHEAD = "Tell us a bit about your practice. We'll come to the call ready to talk specifics."
+CONFIRM_BUTTON_LABEL = "Confirm &amp; Book"
+
+SCHEDULING_HEADLINE = "Choose a Time"
+SCHEDULING_SUBHEAD = "Thanks — your details are saved. Pick a time below to confirm your strategy call."
+
+CONFIRMATION_HEADLINE = "Strategy Call Scheduled"
+CONFIRMATION_TEXT = "Your strategy call with MedLead Partners has been scheduled. We'll see you then."
 
 PRACTICE_TYPE_OPTIONS = [
     ("medical", "Medical Practice"),

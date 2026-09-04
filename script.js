@@ -8,10 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
   initRevealLists();
   initStageTabs();
   initPracticePills();
-  initFormHandler();
+  initBookingFlow();
   initFooterYear();
   initHeaderShadowOnScroll();
   initBackToTop();
+  initFloatingCta();
   initLogoHome();
 });
 
@@ -110,11 +111,98 @@ function initPracticePills() {
   initTabGroup(".practice-pill", "practice-panel-title", "practice-panel-text");
 }
 
-/* ---------- Booking form (local placeholder — no live endpoint yet) ---------- */
-function initFormHandler() {
+/* ---------- Booking flow: lead form -> real Calendly scheduler -> confirmation ----------
+   Three states, one visible at a time:
+     1. #booking-step-form      the contact form (always the first thing shown)
+     2. #booking-step-schedule  the REAL Calendly inline widget (opened only after the
+                                 form validates — this is NOT a booking confirmation)
+     3. #booking-step-confirmed shown ONLY after Calendly fires "calendly.event_scheduled"
+   The Calendly URL is read from data-calendly-url on #book (set from content.py
+   CALENDLY_URL in build.py) so this file has no hardcoded scheduling link. */
+function initBookingFlow() {
+  const bookSection = document.getElementById("book");
   const form = document.getElementById("lead-form");
-  const success = document.getElementById("form-success");
-  if (!form) return;
+  const stepForm = document.getElementById("booking-step-form");
+  const stepSchedule = document.getElementById("booking-step-schedule");
+  const stepConfirmed = document.getElementById("booking-step-confirmed");
+  const calendlyContainer = document.getElementById("calendly-container");
+  const calendlyFallback = document.getElementById("calendly-fallback");
+  if (!bookSection || !form || !stepForm || !stepSchedule || !stepConfirmed || !calendlyContainer) return;
+
+  const calendlyUrl = bookSection.dataset.calendlyUrl;
+  let widgetInitialized = false;
+  let fallbackTimer = null;
+
+  function showStep(step) {
+    [stepForm, stepSchedule, stepConfirmed].forEach((el) => {
+      el.hidden = el !== step;
+    });
+    if (step !== stepForm) {
+      // Move focus/scroll to the new step so screen reader and sighted users
+      // alike land on the right content instead of the page jumping silently.
+      step.scrollIntoView({ behavior: "smooth", block: "start" });
+      step.focus({ preventScroll: true });
+    }
+  }
+
+  function showFallback() {
+    if (fallbackTimer) {
+      window.clearTimeout(fallbackTimer);
+      fallbackTimer = null;
+    }
+    if (calendlyFallback) calendlyFallback.hidden = false;
+  }
+
+  function clearFallbackTimer() {
+    if (fallbackTimer) {
+      window.clearTimeout(fallbackTimer);
+      fallbackTimer = null;
+    }
+    // Widget is actually rendering — no need for the fallback link anymore
+    // even if it was already shown (e.g. it loaded slowly rather than failed).
+    if (calendlyFallback) calendlyFallback.hidden = true;
+  }
+
+  function openScheduler(details) {
+    showStep(stepSchedule);
+
+    if (widgetInitialized || !calendlyUrl) return;
+    widgetInitialized = true;
+
+    // A hard script-load failure (blocked by an ad blocker, corporate network, etc. —
+    // see the onerror handler on the widget.js <script> tag) is detectable immediately;
+    // no reason to make the visitor wait out a timeout for something we already know
+    // isn't going to work.
+    if (
+      window.__calendlyLoadFailed ||
+      !(window.Calendly && typeof window.Calendly.initInlineWidget === "function")
+    ) {
+      showFallback();
+      return;
+    }
+
+    // Script loaded, but the embed can still fail silently in the browser itself —
+    // most commonly when third-party cookies are blocked (Safari's tracking
+    // prevention, many ad blockers, some corporate networks), which Calendly's
+    // inline widget depends on. If we haven't heard a "page_height" message back
+    // (see the message listener below) within a few seconds, the calendar isn't
+    // rendering, so surface the direct link rather than leaving a permanent
+    // "Loading the scheduler…" box with no way forward.
+    fallbackTimer = window.setTimeout(showFallback, 5000);
+
+    window.Calendly.initInlineWidget({
+      url: calendlyUrl,
+      parentElement: calendlyContainer,
+      prefill: {
+        name: details.name,
+        email: details.email,
+      },
+      utm: {
+        utmSource: "website",
+        utmMedium: "strategy_call_form",
+      },
+    });
+  }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -124,12 +212,54 @@ function initFormHandler() {
       return;
     }
 
-    // Placeholder behavior for local/demo use.
-    // In production this posts to the CRM/Zapier endpoint, then Calendly loads below.
-    form.hidden = true;
-    success.hidden = false;
-    success.scrollIntoView({ behavior: "smooth", block: "center" });
+    // DEV NOTE (not shown to visitors): wire this to a real CRM/email endpoint once one
+    // exists, so practice details are captured even if a visitor doesn't finish scheduling.
+    const details = {
+      name: (form.elements["name"].value || "").trim(),
+      email: (form.elements["email"].value || "").trim(),
+    };
+
+    openScheduler(details);
   });
+
+  // Calendly posts a window message for every step of the scheduling flow. We handle two:
+  // "calendly.page_height" resizes the embed to fit its actual content (Calendly's own
+  // auto-resize only covers widgets it auto-scans on page load, not ones created dynamically
+  // via initInlineWidget as we do here, so we size it ourselves) and confirms the widget is
+  // actually rendering, which cancels the fallback timer above. "calendly.event_scheduled"
+  // is the sole signal the site treats as an actual booked meeting — opening the widget above
+  // is never enough on its own.
+  window.addEventListener("message", (e) => {
+    if (!isCalendlyEvent(e)) return;
+
+    if (e.data.event === "calendly.page_height") {
+      clearFallbackTimer();
+      const height = parseInt(e.data.payload && e.data.payload.height, 10);
+      if (!isNaN(height)) {
+        const iframe = calendlyContainer.querySelector("iframe");
+        const target = Math.max(height, 420) + "px";
+        if (iframe) iframe.style.height = target;
+        calendlyContainer.style.minHeight = target;
+        const note = calendlyContainer.querySelector(".calendly-loading-note");
+        if (note) note.style.display = "none";
+      }
+      return;
+    }
+
+    if (e.data.event === "calendly.event_scheduled") {
+      clearFallbackTimer();
+      showStep(stepConfirmed);
+    }
+  });
+
+  function isCalendlyEvent(e) {
+    return (
+      e.origin === "https://calendly.com" &&
+      e.data &&
+      typeof e.data.event === "string" &&
+      e.data.event.indexOf("calendly.") === 0
+    );
+  }
 }
 
 /* ---------- Footer year ---------- */
@@ -166,6 +296,49 @@ function initBackToTop() {
   btn.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
+}
+
+/* ---------- Floating "Book a Strategy Call" pill ----------
+   Visible once the visitor scrolls past the hero; hidden again once the
+   final-CTA/booking area scrolls into view so it never sits alongside the
+   "Book a Strategy Call" buttons already there (nav CTA excluded — that
+   one lives in the fixed header, not the scrolling page). Uses
+   IntersectionObserver rather than scroll-position math so it stays
+   correct regardless of how content above it changes length. */
+function initFloatingCta() {
+  const cta = document.getElementById("floating-cta");
+  const hero = document.getElementById("home");
+  const bookingArea = document.querySelector(".final-cta");
+  if (!cta || !hero || !bookingArea) return;
+
+  let pastHero = false;
+  let inBookingArea = false;
+
+  const update = () => {
+    cta.classList.toggle("is-visible", pastHero && !inBookingArea);
+  };
+
+  const heroObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        pastHero = !entry.isIntersecting;
+        update();
+      });
+    },
+    { threshold: 0 }
+  );
+  heroObserver.observe(hero);
+
+  const bookingObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        inBookingArea = entry.isIntersecting;
+        update();
+      });
+    },
+    { threshold: 0, rootMargin: "0px" }
+  );
+  bookingObserver.observe(bookingArea);
 }
 
 /* ---------- Scroll-spy: highlight the current section's nav link ----------
