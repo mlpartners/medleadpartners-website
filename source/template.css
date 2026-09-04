@@ -1,0 +1,565 @@
+/* ==========================================================================
+   MED LEAD PARTNERS — DESIGN SYSTEM v2 (editorial / interactive)
+   Brand source of truth: Montserrat / #000000 / #6893EF
+   ========================================================================== */
+
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --off-white: #f7f8fa;
+  --blue: #6893ef;
+  --blue-dark: #4d76d6;
+  --blue-text: #3d63c4;
+  --slate: #52566b;
+  --border: #e4e7ee;
+
+  --font: "Montserrat", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --container: 1180px;
+  --container-narrow: 760px;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  --section-pad: clamp(72px, 10vw, 140px);
+  --section-pad-mobile: 56px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+body {
+  font-family: var(--font);
+  color: var(--black);
+  background: var(--white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+button { font-family: inherit; cursor: pointer; background: none; border: none; }
+input, select, textarea { font-family: inherit; font-size: 16px; }
+
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+.container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+.container-narrow { max-width: var(--container-narrow); }
+
+/* ==========================================================================
+   TYPE
+   ========================================================================== */
+
+h1, h2, h3 { font-weight: 700; line-height: 1.12; color: var(--black); }
+h1 { font-size: clamp(34px, 5vw, 60px); letter-spacing: -0.01em; }
+h2 { font-size: clamp(28px, 3.4vw, 42px); font-weight: 600; letter-spacing: -0.01em; }
+h3 { font-size: 19px; font-weight: 600; margin-bottom: 8px; }
+p { color: var(--slate); font-size: 17px; }
+
+.section-intro { max-width: 620px; font-size: 18px; margin-top: 14px; }
+
+/* Section marker — echoes the brand's own plus-icon; large scale, part of the headline itself */
+.marker { display: inline-flex; align-items: baseline; gap: 10px; }
+.marker .plus { color: var(--blue); font-weight: 700; }
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 14px 28px; border-radius: var(--radius-sm);
+  font-size: 16px; font-weight: 600; white-space: nowrap;
+  transition: transform .15s ease, background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.btn-primary { background: var(--blue); color: var(--black); }
+.btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); }
+.btn-secondary { background: transparent; color: var(--black); border: 1.5px solid var(--black); }
+.btn-secondary:hover { background: var(--black); color: var(--white); }
+.btn-light { background: var(--white); color: var(--black); }
+.btn-light:hover { background: var(--black); color: var(--white); }
+.btn-full { width: 100%; }
+.text-link { font-weight: 600; color: var(--blue-text); }
+.text-link:hover { text-decoration: underline; }
+
+/* ==========================================================================
+   HEADER / NAV
+   ========================================================================== */
+
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.94); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  transition: background-color .2s ease, box-shadow .2s ease;
+}
+.site-header.is-scrolled {
+  background: rgba(255,255,255,0.98);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 76px; gap: 24px; }
+.logo-link { display: flex; align-items: center; flex-shrink: 0; }
+.logo-img { height: 32px; width: auto; }
+.primary-nav { display: flex; align-items: center; gap: 32px; flex: 1; justify-content: center; }
+.primary-nav a { font-size: 15px; font-weight: 500; color: var(--black); position: relative; }
+.primary-nav a::after {
+  content: ""; position: absolute; left: 0; bottom: -6px; width: 0; height: 2px;
+  background: var(--blue); transition: width .2s ease;
+}
+.primary-nav a:hover::after { width: 100%; }
+.primary-nav a:hover { color: var(--blue-text); }
+.primary-nav a.is-current::after { width: 100%; }
+.nav-cta { flex-shrink: 0; padding: 11px 22px; }
+
+.menu-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 32px; height: 32px; flex-shrink: 0; }
+.menu-toggle span { display: block; height: 2px; width: 100%; background: var(--black); transition: transform .2s ease, opacity .2s ease; }
+.menu-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.is-open span:nth-child(2) { opacity: 0; }
+.menu-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu { display: none; flex-direction: column; gap: 4px; padding: 12px 24px 24px; border-top: 1px solid var(--border); }
+.mobile-menu a { padding: 14px 0; font-size: 17px; font-weight: 500; border-bottom: 1px solid var(--border); }
+.mobile-cta { margin-top: 16px; border-bottom: none; text-align: center; }
+.mobile-menu.is-open { display: flex; }
+
+/* ==========================================================================
+   HERO (homepage)
+   ========================================================================== */
+
+.hero { position: relative; padding: clamp(90px, 14vw, 160px) 0 clamp(70px, 10vw, 120px); overflow: hidden; }
+.hero-watermark {
+  position: absolute; top: 50%; right: -6%; transform: translateY(-50%);
+  font-size: min(46vw, 620px); font-weight: 700; color: var(--off-white);
+  line-height: 1; z-index: 0; pointer-events: none; user-select: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 900px; }
+.hero h1 { margin-bottom: 24px; }
+.hero-sub { font-size: 19px; max-width: 620px; margin-bottom: 36px; }
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+/* ==========================================================================
+   CORE IDEA
+   ========================================================================== */
+
+.core-idea { padding: 0 0 var(--section-pad); }
+.core-idea .statement { font-size: clamp(26px, 3.6vw, 44px); font-weight: 600; line-height: 1.25; max-width: 780px; }
+.core-idea p.section-intro { margin-top: 22px; }
+
+/* ==========================================================================
+   SECTIONS (shared)
+   ========================================================================== */
+
+.section { padding: var(--section-pad) 0; }
+.section-tint { background: var(--off-white); }
+.section-head { margin-bottom: 48px; }
+
+/* ==========================================================================
+   SYSTEM — interactive stage selector
+   ========================================================================== */
+
+.stage-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 44px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+.stage-tab {
+  padding: 14px 4px; margin-right: 28px; font-size: 16px; font-weight: 600;
+  color: var(--slate); border-bottom: 2px solid transparent; position: relative; top: 1px;
+  transition: color .15s ease, border-color .15s ease;
+}
+.stage-tab .num { color: var(--border); font-weight: 700; margin-right: 8px; }
+.stage-tab.is-active { color: var(--black); border-color: var(--blue); }
+.stage-tab.is-active .num { color: var(--blue); }
+.stage-tab:hover { color: var(--black); }
+
+.stage-panel { margin-top: 36px; min-height: 90px; }
+.stage-panel-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+.stage-panel-text { font-size: 18px; max-width: 620px; }
+.system-more { margin-top: 32px; display: inline-block; }
+
+.process-block { margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--border); }
+.process-heading { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+
+/* Shared panel treatment for every custom brand graphic on the site —
+   How It Works, Services, Who We Serve, Results all use this same frame
+   so the graphics read as one consistent family, not one-off illustrations. */
+.graphic-panel {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; background: var(--white);
+}
+.graphic-panel svg { width: 100%; height: auto; display: block; }
+
+/* Technology strip within How It Works — small, understated, not a
+   standalone section. Custom abstract graphic + capability badges. */
+.tech-strip {
+  margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--border);
+  display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 48px; align-items: center;
+}
+.tech-stack-label { font-size: 15.5px; color: var(--slate); margin-bottom: 18px; max-width: 440px; }
+
+/* Generic header-split layout — section intro/heading alongside a small
+   custom graphic. Used by Services, Who We Serve, and Results so every
+   section-level graphic sits in the same place, at the same size. */
+.head-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; margin-bottom: 40px; }
+.head-split-visual { max-width: 260px; }
+
+/* What We Run: acquisition-path graphic beside a stacked column of
+   service pills. Both columns are vertical lists of comparable height
+   so the two sides read as one balanced composition. */
+.services-system {
+  margin-top: 48px; display: grid; grid-template-columns: 0.9fr 1.1fr;
+  gap: 48px; align-items: center;
+}
+.services-system-visual { max-width: 300px; margin: 0 auto; }
+.services-system-visual svg { max-height: 340px; }
+
+/* Purely informational, not interactive: no border box, no hover state,
+   no cursor change. A thin divider between rows (not a box around each
+   row) is the only visual separation, so this reads as a plain list a
+   visitor scans, never as something clickable. Only sections that are
+   actually interactive (e.g. the Who We Serve practice pills) should
+   look like they respond to a click. */
+.service-pills { display: flex; flex-direction: column; }
+.service-pill {
+  display: flex; align-items: center; gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--black);
+  font-size: 15px; font-weight: 600;
+}
+.service-pill:last-child { border-bottom: none; }
+.service-pill-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+
+/* ==========================================================================
+   REVEAL LIST — shared accordion pattern (Services / Who We Serve / FAQ)
+   ========================================================================== */
+
+.reveal-list { border-top: 1px solid var(--border); margin-top: 40px; }
+.reveal-item { border-bottom: 1px solid var(--border); }
+.reveal-trigger {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 26px 4px; text-align: left; font-size: 20px; font-weight: 600; color: var(--black);
+  gap: 20px;
+}
+.reveal-trigger .num { color: var(--border); font-weight: 700; font-size: 16px; margin-right: 18px; flex-shrink: 0; }
+.reveal-trigger.is-open .num { color: var(--blue); }
+.reveal-label { flex: 1; }
+
+.reveal-icon { position: relative; width: 18px; height: 18px; flex-shrink: 0; }
+.reveal-icon::before, .reveal-icon::after { content: ""; position: absolute; background: var(--black); transition: transform .25s ease; }
+.reveal-icon::before { top: 8px; left: 0; width: 18px; height: 2px; }
+.reveal-icon::after { top: 0; left: 8px; width: 2px; height: 18px; }
+.reveal-trigger.is-open .reveal-icon::after { transform: scaleY(0); }
+.reveal-trigger.is-open .reveal-icon::before { background: var(--blue); }
+
+.reveal-panel { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+.reveal-panel-inner { padding: 0 4px 28px; max-width: 640px; }
+.reveal-panel-inner p { margin-bottom: 6px; }
+.reveal-panel-inner .label { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--black); margin-top: 14px; display: block; }
+.reveal-panel-inner .label:first-child { margin-top: 0; }
+.reveal-panel-inner a { margin-top: 14px; display: inline-block; }
+
+/* Services list keeps numbers; Who We Serve list omits them via this modifier */
+.reveal-list.no-nums .reveal-trigger .num { display: none; }
+
+.section-link { margin-top: 32px; display: inline-block; }
+
+/* ==========================================================================
+   RESULTS (homepage compact + inner page)
+   ========================================================================== */
+
+.results-compact { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }.case-card {
+  border: 1.5px dashed #c7cddb; border-radius: var(--radius); padding: 28px;
+  background: var(--white); max-width: 420px;
+}
+.case-tag {
+  display: inline-block; font-size: 12px; font-weight: 600; color: var(--blue-text);
+  background: rgba(104,147,239,0.12); padding: 5px 10px; border-radius: 5px;
+  margin-bottom: 16px; line-height: 1.4;
+}
+.case-fields dt { font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--black); margin-top: 12px; }
+.case-fields dt:first-child { margin-top: 0; }
+.case-fields dd { font-size: 14.5px; margin-top: 3px; color: var(--slate); }
+.case-metric { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px; font-weight: 600; color: var(--slate); }
+.case-card-real { border-style: solid; border-color: var(--border); }
+
+/* Testimonials. Dormant until content.py's TESTIMONIALS list has entries.
+   Kept here so real testimonials can be added later with no redesign. */
+.testimonial-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+.testimonial-card blockquote { font-size: 17px; color: var(--black); line-height: 1.55; margin: 0 0 24px; }
+.testimonial-card figcaption { display: flex; align-items: center; gap: 12px; }
+.testimonial-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.testimonial-photo-placeholder { background: var(--off-white); border: 1px solid var(--border); }
+.testimonial-name { font-size: 14.5px; font-weight: 600; color: var(--black); }
+.testimonial-role { font-size: 13.5px; color: var(--slate); }
+.testimonial-disclaimer {
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+  color: var(--blue-text); margin-top: 10px;
+}
+.testimonial-logo { height: 20px; margin-left: auto; }
+
+/* ==========================================================================
+   TECHNOLOGY BADGES & SAMPLE TESTIMONIAL
+   Woven into How It Works / Services / Results. Not a standalone section.
+   ========================================================================== */
+
+.badge-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.badge-chip {
+  display: inline-flex; align-items: center;
+  padding: 9px 16px; border-radius: 999px;
+  background: rgba(104,147,239,0.10); color: var(--blue-text);
+  font-size: 14px; font-weight: 600; line-height: 1.3;
+}
+.badge-logo { height: 16px; width: auto; margin-right: 8px; display: inline-block; }
+
+.sample-testimonial { border-style: dashed; border-color: #c7cddb; }
+.sample-testimonial .case-tag { margin-bottom: 20px; }
+.sample-testimonial blockquote { font-style: normal; }
+
+.proof-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 40px; }
+
+/* Results: "What we track" is a lightweight, borderless grid, deliberately
+   not styled as a case-card so it never competes visually with actual
+   proof (case studies, testimonials) below it. */
+.track-heading { font-size: 18px; font-weight: 600; margin-top: 40px; margin-bottom: 20px; }
+.track-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+.track-label { font-size: 14.5px; font-weight: 700; color: var(--black); margin-bottom: 6px; }
+.track-text { font-size: 13.5px; color: var(--slate); line-height: 1.5; }
+
+.results-divider { border-top: 1px solid var(--border); margin: 40px 0; }
+
+.proof-note { font-size: 15px; color: var(--slate); margin-bottom: 20px; }
+.proof-single .testimonial-card { max-width: 480px; }
+
+/* Who We Serve: clickable practice-type pills, single shared panel below.
+   Same interaction mechanic as the How It Works stage selector (one
+   active button, one shared text panel) but styled as rounded pills so
+   the two sections still read as visually distinct from one another.
+   A 3-column grid (rather than flex-wrap) gives a deliberate 3-then-2
+   arrangement for five items instead of an organic, text-length-driven
+   wrap, so the layout feels designed rather than incidental. */
+.practice-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 48px; }
+.practice-pill {
+  padding: 11px 20px; border-radius: 999px; text-align: center;
+  border: 1px solid var(--border); background: var(--white);
+  font-size: 14.5px; font-weight: 600; color: var(--black);
+  transition: border-color .15s ease, background-color .15s ease, color .15s ease;
+}
+.practice-pill:hover { border-color: var(--blue); }
+.practice-pill.is-active { background: var(--blue); border-color: var(--blue); color: #000; }
+
+.practice-panel { margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--border); min-height: 84px; }
+.practice-panel-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.practice-panel-text { font-size: 16px; max-width: 560px; }
+
+/* Services section header — intro text alongside a small custom
+   abstract interface graphic. Accordion below stays full width. */
+
+/* ==========================================================================
+   FINAL CTA
+   ========================================================================== */
+
+.final-cta { background: var(--blue); padding: 80px 0; text-align: center; }
+.final-cta h2 { max-width: 540px; margin: 0 auto 28px; }
+
+/* ==========================================================================
+   BACK TO TOP
+   ========================================================================== */
+
+.back-to-top {
+  position: fixed; right: 24px; bottom: 24px; z-index: 90;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--white); border: 1.5px solid var(--border);
+  color: var(--black);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease, border-color .15s ease, background-color .15s ease;
+}
+.back-to-top.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.back-to-top:hover { border-color: var(--blue); background: var(--off-white); }
+
+/* ==========================================================================
+   PAGE HEADER (inner pages)
+   ========================================================================== */
+
+.page-header { padding: clamp(70px, 10vw, 120px) 0 var(--section-pad); }
+.page-header h1 { max-width: 780px; margin-bottom: 20px; }
+.page-header .section-intro { font-size: 19px; }
+
+/* ==========================================================================
+   PROBLEM / THREE-COL (inner pages)
+   ========================================================================== */
+
+.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 48px; }
+.point-icon, .vertical-icon { width: 36px; height: 36px; margin-bottom: 18px; }
+.point p, .vertical p, .why-list p { font-size: 16px; }
+
+/* ==========================================================================
+   DETAILED STAGE CARDS (How It Works)
+   ========================================================================== */
+
+.stage-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+.stage-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 28px; }
+.stage-card .stage-marker { width: 32px; height: 32px; border-radius: 50%; background: var(--black); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; margin-bottom: 18px; }
+.stage-card.is-final .stage-marker { background: var(--blue); color: var(--black); }
+.stage-card p { font-size: 15px; }
+
+/* ==========================================================================
+   CARDS (Services detail page)
+   ========================================================================== */
+
+.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+.card { border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 28px; transition: border-color .2s ease, transform .2s ease; }
+.card:hover { border-color: var(--blue); transform: translateY(-2px); }
+.card-icon { width: 30px; height: 30px; margin-bottom: 20px; }
+.card p { font-size: 15.5px; }
+.card .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--blue-text); display: block; margin-top: 16px; }
+
+/* ==========================================================================
+   PROCESS (How It Works page)
+   ========================================================================== */
+
+.process-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin: 48px 0 44px; }
+.process-list li { display: flex; flex-direction: column; gap: 14px; }
+.process-num { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--black); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+.process-list h3 { font-size: 17px; }
+.process-list p { font-size: 15px; }
+
+/* ==========================================================================
+   FORM (Booking page)
+   ========================================================================== */
+
+.lead-form { margin-top: 40px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.field { margin-bottom: 20px; }
+.field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 7px; }
+.req { color: var(--blue-text); }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--white); transition: border-color .15s ease;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); outline: none; }
+.field textarea { resize: vertical; min-height: 90px; }
+.form-success { margin-top: 32px; padding: 28px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--off-white); text-align: center; }
+.form-success h3 { margin-bottom: 8px; }
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.site-footer { background: var(--black); color: var(--white); padding: 88px 0 0; }
+
+.footer-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 40px; padding-bottom: 56px;
+}
+.footer-logo-lg { height: 32px; filter: brightness(0) invert(1); margin-bottom: 18px; }
+.footer-tagline { color: rgba(255,255,255,0.55); font-size: 15px; max-width: 300px; }
+.footer-contact-line { margin-top: 14px; font-size: 14px; }
+.footer-contact-line a { color: rgba(255,255,255,0.7); }
+.footer-contact-line a:hover { color: var(--blue); }
+.footer-social { margin-top: 10px; display: flex; align-items: center; gap: 14px; }
+.footer-social a { font-size: 13.5px; color: rgba(255,255,255,0.6); }
+.footer-social a:hover { color: var(--blue); }
+.footer-social-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.75);
+  transition: color .15s ease, border-color .15s ease;
+}
+.footer-social-icon:hover { color: var(--blue); border-color: var(--blue); }
+
+.footer-cta-block { text-align: right; flex-shrink: 0; }
+.footer-cta-label {
+  display: block; color: rgba(255,255,255,0.5); font-size: 13px;
+  font-weight: 500; letter-spacing: 0.02em; margin-bottom: 14px;
+}
+
+.footer-nav-row {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  padding: 28px 0 44px;
+}
+.footer-nav-row a { font-size: 14.5px; font-weight: 500; color: rgba(255,255,255,0.75); }
+.footer-nav-row a:hover { color: var(--blue); }
+.footer-nav-sep { color: var(--blue); font-weight: 700; font-size: 14px; opacity: 0.85; }
+
+.footer-divider { border-top: 1px solid rgba(255,255,255,0.12); }
+
+.footer-bottom-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 0; flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom-row p { color: rgba(255,255,255,0.45); font-size: 13px; }
+.footer-legal { display: flex; gap: 20px; }
+.footer-legal a { color: rgba(255,255,255,0.45); font-size: 13px; }
+.footer-legal a:hover { color: var(--white); }
+
+/* ==========================================================================
+   RESPONSIVE — TABLET
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .results-compact { grid-template-columns: 1fr; gap: 36px; }
+  .trust-grid { grid-template-columns: 1fr; gap: 36px; }
+  .trust-statement { max-width: 100%; }
+  .case-card { margin: 0; }
+  .three-col, .stage-cards, .card-grid, .proof-grid { grid-template-columns: repeat(2, 1fr); }
+  .practice-pills { grid-template-columns: repeat(2, 1fr); }
+  .track-grid { grid-template-columns: repeat(3, 1fr); }
+  .tech-strip { grid-template-columns: 1fr; gap: 32px; }
+  .head-split { grid-template-columns: 1fr; gap: 28px; }
+  .head-split-visual, .tech-strip .graphic-panel { max-width: 280px; }
+  .services-system { grid-template-columns: 1fr; gap: 32px; }
+  .services-system-visual { max-width: 220px; }
+  .process-list { grid-template-columns: repeat(2, 1fr); gap: 36px 28px; }
+  .footer-top { gap: 32px; }
+  .hero-watermark { font-size: min(60vw, 480px); right: -12%; opacity: 0.7; }
+}
+
+/* ==========================================================================
+   RESPONSIVE — MOBILE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .primary-nav { display: none; }
+  .nav-cta { display: none; }
+  .menu-toggle { display: flex; }
+
+  .section, .hero, .page-header { padding: var(--section-pad-mobile) 0; }
+  .core-idea { padding-bottom: var(--section-pad-mobile); }
+  .final-cta { padding: 56px 0; }
+
+  .three-col, .stage-cards, .card-grid, .process-list, .proof-grid { grid-template-columns: 1fr; gap: 32px; }
+  .track-grid { grid-template-columns: 1fr; gap: 24px; }
+
+  .practice-pill { padding: 10px 16px; font-size: 14px; }
+  .practice-pills { grid-template-columns: 1fr; }
+
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { width: 100%; }
+  .hero-watermark { display: none; }
+
+  .stage-tabs { gap: 14px 22px; }
+  .stage-tab { margin-right: 0; }
+
+  .reveal-trigger { font-size: 17px; padding: 20px 2px; }
+  .reveal-trigger .num { margin-right: 12px; }
+
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+
+  .footer-top { flex-direction: column; align-items: flex-start; gap: 28px; }
+  .footer-cta-block { text-align: left; width: 100%; }
+  .footer-cta-block .btn { width: 100%; }
+  .footer-nav-row { gap: 12px 16px; }
+  .footer-bottom-row { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 30px; }
+  h2 { font-size: 25px; }
+  .btn { width: 100%; }
+  .nav-inner { height: 68px; }
+  .logo-img { height: 26px; }
+}
