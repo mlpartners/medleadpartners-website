@@ -262,6 +262,7 @@ CONTACT_PHONE = None   # e.g. "+1 (555) 123-4567"
 
 SOCIAL_LINKS = [
     {"label": "Instagram", "url": "https://www.instagram.com/medleadpartners/", "aria_label": "MedLead Partners on Instagram", "icon": "instagram"},
+    {"label": "Facebook", "url": "https://www.facebook.com/MedLeadPartners/", "aria_label": "MedLead Partners on Facebook", "icon": "facebook"},
 ]  # each entry needs a matching icon renderer in build.py's SOCIAL_ICONS, or it falls back to a plain text link
 
 # Only add an entry here once a real destination page exists for it.

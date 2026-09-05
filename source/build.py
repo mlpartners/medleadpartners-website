@@ -543,6 +543,12 @@ SOCIAL_ICONS = {
         '<circle cx="17.3" cy="6.7" r="1.15" fill="currentColor"/>'
         '</svg>'
     ),
+    "facebook": (
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">'
+        '<rect x="2" y="2" width="20" height="20" rx="5.5" stroke="currentColor" stroke-width="1.8"/>'
+        '<path d="M13.8 18.2V12.4H15.75L16.05 10.05H13.8V8.55C13.8 7.89 13.98 7.44 14.93 7.44H16.13V5.34C15.93 5.31 15.24 5.25 14.44 5.25C12.77 5.25 11.62 6.27 11.62 8.14V10.05H9.75V12.4H11.62V18.2H13.8Z" fill="currentColor"/>'
+        '</svg>'
+    ),
 }
 
 

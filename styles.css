@@ -538,15 +538,30 @@ p { color: var(--slate); font-size: 17px; }
   }
   .back-to-top { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 40px; height: 40px; }
 
-  .practice-pill { padding: 10px 16px; font-size: 14px; }
-  .practice-pills { grid-template-columns: 1fr; }
+  .practice-pills {
+    grid-template-columns: none; display: flex; gap: 8px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px;
+  }
+  .practice-pills::-webkit-scrollbar { display: none; }
+  .practice-pill { flex-shrink: 0; white-space: nowrap; padding: 10px 16px; font-size: 14px; }
 
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn { width: 100%; }
   .hero-watermark { display: none; }
+  .hero h1 { margin-bottom: 14px; }
+  .hero-sub { margin-bottom: 20px; }
 
-  .stage-tabs { gap: 14px 22px; }
-  .stage-tab { margin-right: 0; }
+  /* Purely decorative illustrations — hidden on mobile only. Every fact they show
+     is already in the text beside them (service list / practice pills), so nothing
+     is lost; this just removes two more "card" boxes from an already long stack. */
+  .services-system-visual, .head-split-visual { display: none; }
+
+  .stage-tabs {
+    flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; gap: 22px; padding-bottom: 2px;
+  }
+  .stage-tabs::-webkit-scrollbar { display: none; }
+  .stage-tab { margin-right: 0; flex-shrink: 0; white-space: nowrap; }
 
   .reveal-trigger { font-size: 17px; padding: 20px 2px; }
   .reveal-trigger .num { margin-right: 12px; }
@@ -554,11 +569,12 @@ p { color: var(--slate); font-size: 17px; }
   .form-row { grid-template-columns: 1fr; gap: 0; }
   .calendly-container { min-height: 580px; }
 
-  .footer-top { flex-direction: column; align-items: flex-start; gap: 28px; }
+  .site-footer { padding: 40px 0 0; }
+  .footer-top { flex-direction: column; align-items: flex-start; gap: 22px; padding-bottom: 28px; }
   .footer-cta-block { text-align: left; width: 100%; }
   .footer-cta-block .btn { width: 100%; }
-  .footer-nav-row { gap: 12px 16px; }
-  .footer-bottom-row { flex-direction: column; align-items: flex-start; }
+  .footer-nav-row { gap: 10px 14px; padding: 16px 0 22px; }
+  .footer-bottom-row { flex-direction: column; align-items: flex-start; padding: 14px 0; }
 }
 
 @media (max-width: 480px) {

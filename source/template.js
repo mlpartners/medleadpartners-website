@@ -312,10 +312,10 @@ function initFloatingCta() {
   if (!cta || !hero || !bookingArea) return;
 
   let pastHero = false;
-  let inBookingArea = false;
+  let inOrPastBookingArea = false;
 
   const update = () => {
-    cta.classList.toggle("is-visible", pastHero && !inBookingArea);
+    cta.classList.toggle("is-visible", pastHero && !inOrPastBookingArea);
   };
 
   const heroObserver = new IntersectionObserver(
@@ -329,16 +329,28 @@ function initFloatingCta() {
   );
   heroObserver.observe(hero);
 
-  const bookingObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        inBookingArea = entry.isIntersecting;
-        update();
-      });
-    },
-    { threshold: 0, rootMargin: "0px" }
-  );
-  bookingObserver.observe(bookingArea);
+  // Once the visitor reaches the final-CTA band, keep the pill hidden for the rest of
+  // the page (through the booking form and the footer), not just while that one band
+  // happens to be on screen — a plain intersection check would let it reappear once the
+  // band scrolls out of view above (e.g. down at the footer), sitting on top of footer
+  // content.
+  let ticking = false;
+  const checkBookingArea = () => {
+    ticking = false;
+    const bandTop = bookingArea.getBoundingClientRect().top + window.scrollY;
+    inOrPastBookingArea = window.scrollY + window.innerHeight > bandTop;
+    update();
+  };
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(checkBookingArea);
+    }
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", checkBookingArea);
+  checkBookingArea();
 }
 
 /* ---------- Scroll-spy: highlight the current section's nav link ----------
