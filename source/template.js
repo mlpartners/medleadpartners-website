@@ -22,6 +22,12 @@ function initLogoHome() {
   if (!logo) return;
 
   logo.addEventListener("click", (e) => {
+    // Only intercept for an in-page scroll when the link points at this
+    // same page's own #home (i.e. we're already on the homepage). On any
+    // other page the href points elsewhere (build.py renders it as
+    // "index.html#home"), so let the browser navigate there normally
+    // instead of just scrolling the current page to the top.
+    if (logo.getAttribute("href") !== "#home") return;
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -208,9 +214,21 @@ function initBookingFlow() {
     e.preventDefault();
 
     if (!form.checkValidity()) {
+      // Only now do empty/invalid required fields get a red border (see the
+      // .was-validated CSS rule) — never on initial page load, only after a
+      // real failed submit attempt, same as the native validity bubble.
+      form.classList.add("was-validated");
       form.reportValidity();
       return;
     }
+
+    // Honeypot spam check: this field is invisible and untabbable for real visitors
+    // (see the CSS + tabindex="-1" on #hp-website), so anything filling it in is almost
+    // certainly an automated bot. Silently drop the submission rather than opening the
+    // real Calendly scheduler for it — no error shown, since a real visitor never
+    // triggers this path in the first place.
+    const honeypot = form.elements["hp-website"];
+    if (honeypot && honeypot.value.trim() !== "") return;
 
     // DEV NOTE (not shown to visitors): wire this to a real CRM/email endpoint once one
     // exists, so practice details are captured even if a visitor doesn't finish scheduling.

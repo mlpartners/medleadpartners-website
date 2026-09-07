@@ -61,85 +61,126 @@ else:
 if DEPLOY:
     LOGO_SRC = "assets/logo.png"
     FAVICON_SRC = "assets/favicon.png"
+    APPLE_ICON_SRC = "assets/apple-touch-icon.png"
 else:
     LOGO_SRC = data_uri("assets/logo.png")
     FAVICON_SRC = data_uri("assets/favicon.png")
+    APPLE_ICON_SRC = data_uri("assets/apple-touch-icon.png")
 
 # Backwards-compatible aliases used throughout the render_* functions below.
 LOGO_URI = LOGO_SRC
 FAVICON_URI = FAVICON_SRC
+APPLE_ICON_URI = APPLE_ICON_SRC
 
 
 # ==========================================================================
 # SMALL RENDER HELPERS
 # ==========================================================================
 
-def nav_links(link_class=""):
+def nav_links(link_class="", home=""):
+    # `home` is the relative path back to index.html: "" when this link is
+    # rendered on the homepage itself (so plain "#section" anchors work),
+    # or "index.html" when rendered on a different page (privacy.html etc.),
+    # so the link becomes "index.html#section" instead of a dead "#section"
+    # that would just scroll a page with no matching id.
     return "\n        ".join(
-        f'<a href="#{sid}" class="{link_class}">{label}</a>' for sid, label in c.NAV
+        f'<a href="{home}#{sid}" class="{link_class}">{label}</a>' for sid, label in c.NAV
     )
 
 
-def render_head():
+def render_head(page_title=None, page_description=None, canonical_path="", noindex=False, og_type="website", include_calendly=True, og_title=None):
+    """Shared <head> for every page. canonical_path is the page's own path
+    relative to the site root ("" for the homepage, "privacy.html" for the
+    privacy page, etc.) — used to build the canonical link and og:url from
+    content.py's SITE_URL. Update SITE_URL there once the real domain is live.
+    include_calendly should be False for any page that doesn't render the
+    booking widget (privacy/terms/404) — no reason to load Calendly's
+    stylesheet on a page that will never use it.
+    page_title is the literal <title> element (the browser tab). og_title is
+    what's shown in social-share previews (og:title/twitter:title) — kept as
+    a separate parameter so the homepage can have a bare "MedLead Partners"
+    tab title while social previews stay descriptive. Defaults to page_title
+    when not given, so every other page's behavior is unchanged."""
+    page_title = page_title or c.PAGE_TITLE
+    og_title = og_title or page_title
+    page_description = page_description or c.SITE_DESCRIPTION
+    canonical_url = f"{c.SITE_URL}/{canonical_path}" if canonical_path else f"{c.SITE_URL}/"
+
+    # og:image needs an absolute URL — social platforms generally won't
+    # resolve a relative path or fetch a base64 data URI. In deploy mode
+    # this becomes a real hosted URL once SITE_URL is the live domain; in
+    # inline/self-contained mode we fall back to the embedded logo so the
+    # tag is still valid for local viewing.
+    og_image = f"{c.SITE_URL}/assets/logo.png" if DEPLOY else LOGO_URI
+
     css_block = (
         '<link rel="stylesheet" href="styles.css">'
         if DEPLOY
         else f"<style>\n{CSS}\n</style>"
+    )
+    robots_tag = (
+        '<meta name="robots" content="noindex, nofollow">'
+        if noindex
+        else '<meta name="robots" content="index, follow">'
+    )
+    calendly_css = (
+        '<!-- Calendly\'s stylesheet for the real, inline scheduling widget used in the\n'
+        '     booking flow (see #book section). This is the one additional external\n'
+        '     dependency the real Calendly integration requires. -->\n'
+        '<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">\n'
+        if include_calendly else ""
     )
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{html.escape(c.PAGE_TITLE)}</title>
-<meta name="description" content="{html.escape(c.SITE_DESCRIPTION)}">
+<title>{html.escape(page_title)}</title>
+<meta name="description" content="{html.escape(page_description)}">
+{robots_tag}
+<link rel="canonical" href="{canonical_url}">
 
-<!-- Open Graph / social link preview foundation.
-     og:image is embedded as the actual brand logo (base64) so the foundation works today;
-     once the site is hosted, replace it with a hosted absolute image URL. Most link-preview
-     crawlers (Slack, iMessage, LinkedIn, etc.) will not fetch a base64 data URI. -->
-<meta property="og:type" content="website">
+<!-- Open Graph / social link preview. -->
+<meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="MedLead Partners">
-<meta property="og:title" content="{html.escape(c.SITE_TITLE)}">
-<meta property="og:description" content="{html.escape(c.SITE_DESCRIPTION)}">
-<meta property="og:image" content="{LOGO_URI}">
+<meta property="og:url" content="{canonical_url}">
+<meta property="og:title" content="{html.escape(og_title)}">
+<meta property="og:description" content="{html.escape(page_description)}">
+<meta property="og:image" content="{og_image}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{html.escape(c.SITE_TITLE)}">
-<meta name="twitter:description" content="{html.escape(c.SITE_DESCRIPTION)}">
-<meta name="twitter:image" content="{LOGO_URI}">
+<meta name="twitter:title" content="{html.escape(og_title)}">
+<meta name="twitter:description" content="{html.escape(page_description)}">
+<meta name="twitter:image" content="{og_image}">
 
 <link rel="icon" type="image/png" href="{FAVICON_URI}">
+<link rel="apple-touch-icon" href="{APPLE_ICON_URI}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- Calendly's stylesheet for the real, inline scheduling widget used in the
-     booking flow (see #book section). This is the one additional external
-     dependency the real Calendly integration requires. -->
-<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-{css_block}
+{calendly_css}{css_block}
 </head>
 <body>
 """
 
 
-def render_header():
+def render_header(home=""):
     return f"""
   <header class="site-header" id="site-header">
     <div class="container nav-inner">
-      <a href="#home" class="logo-link" aria-label="MedLead Partners home">
-        <img src="{LOGO_URI}" alt="MedLead Partners logo" class="logo-img">
+      <a href="{home}#home" class="logo-link" aria-label="MedLead Partners home">
+        <img src="{LOGO_URI}" alt="MedLead Partners logo" class="logo-img" width="112" height="32">
       </a>
       <nav class="primary-nav" id="primary-nav" aria-label="Primary">
-        {nav_links()}
+        {nav_links(home=home)}
       </nav>
-      <a href="{c.BOOKING_HREF}" class="btn btn-primary nav-cta">{c.PRIMARY_CTA_LABEL}</a>
+      <a href="{home}{c.BOOKING_HREF}" class="btn btn-primary nav-cta">{c.PRIMARY_CTA_LABEL}</a>
       <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
         <span></span><span></span><span></span>
       </button>
     </div>
     <div class="mobile-menu" id="mobile-menu">
-      {nav_links()}
-      <a href="{c.BOOKING_HREF}" class="btn btn-primary mobile-cta">{c.PRIMARY_CTA_LABEL}</a>
+      {nav_links(home=home)}
+      <a href="{home}{c.BOOKING_HREF}" class="btn btn-primary mobile-cta">{c.PRIMARY_CTA_LABEL}</a>
     </div>
   </header>
 """
@@ -454,16 +495,24 @@ def render_booking():
           </div>
 
           <form class="lead-form" id="lead-form" novalidate>
-            <div class="form-row">
-              <div class="field"><label for="name">Name <span class="req">*</span></label><input type="text" id="name" name="name" required autocomplete="name"></div>
-              <div class="field"><label for="business">Business <span class="req">*</span></label><input type="text" id="business" name="business" required autocomplete="organization"></div>
+            <!-- Honeypot spam-protection field: invisible to real visitors (CSS + tabindex="-1"),
+                 but a plain, generic-looking form field to automated bots that fill in every
+                 input they find. If it comes back non-empty, initBookingFlow() in template.js
+                 silently blocks the submission rather than opening the scheduler. -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="hp-website">Leave this field blank</label>
+              <input type="text" id="hp-website" name="hp-website" tabindex="-1" autocomplete="off">
             </div>
             <div class="form-row">
-              <div class="field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" required autocomplete="email"></div>
-              <div class="field"><label for="phone">Phone <span class="req">*</span></label><input type="tel" id="phone" name="phone" required autocomplete="tel"></div>
+              <div class="field"><label for="name">Name <span class="req">*</span></label><input type="text" id="name" name="name" required autocomplete="name" maxlength="100"></div>
+              <div class="field"><label for="business">Business <span class="req">*</span></label><input type="text" id="business" name="business" required autocomplete="organization" maxlength="120"></div>
             </div>
             <div class="form-row">
-              <div class="field"><label for="website">Website</label><input type="url" id="website" name="website" placeholder="Optional" autocomplete="url"></div>
+              <div class="field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" required autocomplete="email" maxlength="200"></div>
+              <div class="field"><label for="phone">Phone <span class="req">*</span></label><input type="tel" id="phone" name="phone" required autocomplete="tel" inputmode="tel" pattern="[0-9\\s\\-\\+\\(\\)]{{7,20}}" maxlength="20"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="website">Website</label><input type="url" id="website" name="website" placeholder="Optional" autocomplete="url" maxlength="200"></div>
               <div class="field">
                 <label for="practice-type">Practice Type <span class="req">*</span></label>
                 <select id="practice-type" name="practice-type" required>
@@ -472,7 +521,7 @@ def render_booking():
                 </select>
               </div>
             </div>
-            <div class="field"><label for="challenge">Biggest Growth Challenge</label><textarea id="challenge" name="challenge" rows="3" placeholder="Optional"></textarea></div>
+            <div class="field"><label for="challenge">Biggest Growth Challenge</label><textarea id="challenge" name="challenge" rows="3" placeholder="Optional" maxlength="1000"></textarea></div>
             <button type="submit" class="btn btn-primary btn-full">{c.CONFIRM_BUTTON_LABEL}</button>
             <!-- DEV NOTE (not shown to visitors): this form's details currently stay in the
                  browser only (used to prefill Calendly in Step 2). Wire the submit handler in
@@ -563,9 +612,9 @@ def render_social_link(s):
     )
 
 
-def render_footer():
+def render_footer(home=""):
     nav_row = f' <span class="footer-nav-sep" aria-hidden="true">+</span> '.join(
-        f'<a href="#{sid}">{label}</a>' for sid, label in c.NAV
+        f'<a href="{home}#{sid}">{label}</a>' for sid, label in c.NAV
     )
 
     contact_bits = []
@@ -592,14 +641,14 @@ def render_footer():
     <div class="container">
       <div class="footer-top">
         <div class="footer-brand-block">
-          <img src="{LOGO_URI}" alt="MedLead Partners logo" class="footer-logo-lg">
+          <img src="{LOGO_URI}" alt="MedLead Partners logo" class="footer-logo-lg" width="112" height="32">
           <p class="footer-tagline">{c.FOOTER_TAGLINE}</p>
           {contact_html}
           {social_html}
         </div>
         <div class="footer-cta-block">
           <span class="footer-cta-label">Ready to talk?</span>
-          <a href="{c.BOOKING_HREF}" class="btn btn-primary">{c.PRIMARY_CTA_LABEL}</a>
+          <a href="{home}{c.BOOKING_HREF}" class="btn btn-primary">{c.PRIMARY_CTA_LABEL}</a>
         </div>
       </div>
 
@@ -622,9 +671,80 @@ def render_footer():
 """
 
 
+def render_legal_page(page_title, page_description, canonical_path, heading, sections):
+    """Shared renderer for Privacy Policy and Terms & Conditions — same
+    header/footer as the homepage (with home="index.html" so nav/logo/CTA
+    links point back correctly), a simple heading + "last updated" line,
+    and a stack of (heading, body_html) sections using the site's existing
+    typographic styles. No new visual language introduced."""
+    body = "\n        ".join(
+        f'<div class="legal-section"><h2>{h}</h2><p>{text}</p></div>'
+        for h, text in sections
+    )
+    return f"""{render_head(page_title, page_description, canonical_path, include_calendly=False)}{render_header(home="index.html")}
+  <main>
+    <section class="section legal-page" id="top">
+      <div class="container container-narrow">
+        <div class="section-head">
+          <h1>{heading}</h1>
+          <p class="section-intro">Last updated: {c.LAST_UPDATED}</p>
+        </div>
+        {body}
+      </div>
+    </section>
+  </main>
+{render_footer(home="index.html")}"""
+
+
+def render_404_page():
+    """A real, working page — GitHub Pages automatically serves this for any
+    unmatched path when a file named 404.html sits at the site root, no
+    extra configuration needed. noindex since it's not a real destination."""
+    return f"""{render_head(c.NOT_FOUND_TITLE, c.NOT_FOUND_TEXT, "404.html", noindex=True, include_calendly=False)}{render_header(home="index.html")}
+  <main>
+    <section class="section not-found">
+      <div class="container container-narrow" style="text-align:center;">
+        <p class="not-found-code" aria-hidden="true">404</p>
+        <h1>{c.NOT_FOUND_HEADLINE}</h1>
+        <p class="section-intro" style="margin-left:auto;margin-right:auto;">{c.NOT_FOUND_TEXT}</p>
+        <div class="not-found-actions">
+          <a href="index.html" class="btn btn-primary">Back to Homepage</a>
+          <a href="index.html{c.BOOKING_HREF}" class="btn btn-secondary">{c.PRIMARY_CTA_LABEL}</a>
+        </div>
+      </div>
+    </section>
+  </main>
+{render_footer(home="index.html")}"""
+
+
+def render_sitemap():
+    pages = ["", "privacy.html", "terms.html"]  # 404.html is deliberately excluded — not a real destination
+    urls = "\n".join(
+        f"""  <url>
+    <loc>{c.SITE_URL}/{p}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>{"1.0" if p == "" else "0.5"}</priority>
+  </url>"""
+        for p in pages
+    )
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls}
+</urlset>
+"""
+
+
+def render_robots():
+    return f"""User-agent: *
+Allow: /
+
+Sitemap: {c.SITE_URL}/sitemap.xml
+"""
+
+
 def build():
     parts = [
-        render_head(),
+        render_head(og_title=c.SITE_TITLE),
         render_header(),
         render_hero(),
         render_how_it_works(),
@@ -639,23 +759,52 @@ def build():
     ]
     output = "".join(parts)
 
+    privacy_html = render_legal_page(
+        c.PRIVACY_TITLE, c.PRIVACY_DESCRIPTION, "privacy.html", "Privacy Policy", c.PRIVACY_SECTIONS
+    )
+    terms_html = render_legal_page(
+        c.TERMS_TITLE, c.TERMS_DESCRIPTION, "terms.html", "Terms & Conditions", c.TERMS_SECTIONS
+    )
+    not_found_html = render_404_page()
+    sitemap_xml = render_sitemap()
+    robots_txt = render_robots()
+
     if DEPLOY:
         os.makedirs(OUT_DIR, exist_ok=True)
         os.makedirs(os.path.join(OUT_DIR, "assets"), exist_ok=True)
         with open(os.path.join(OUT_DIR, "index.html"), "w") as f:
             f.write(output)
+        with open(os.path.join(OUT_DIR, "privacy.html"), "w") as f:
+            f.write(privacy_html)
+        with open(os.path.join(OUT_DIR, "terms.html"), "w") as f:
+            f.write(terms_html)
+        with open(os.path.join(OUT_DIR, "404.html"), "w") as f:
+            f.write(not_found_html)
+        with open(os.path.join(OUT_DIR, "sitemap.xml"), "w") as f:
+            f.write(sitemap_xml)
+        with open(os.path.join(OUT_DIR, "robots.txt"), "w") as f:
+            f.write(robots_txt)
         with open(os.path.join(OUT_DIR, "styles.css"), "w") as f:
             f.write(CSS)
         with open(os.path.join(OUT_DIR, "script.js"), "w") as f:
             f.write(JS)
         shutil.copyfile(os.path.join(ROOT, "assets/logo.png"), os.path.join(OUT_DIR, "assets/logo.png"))
         shutil.copyfile(os.path.join(ROOT, "assets/favicon.png"), os.path.join(OUT_DIR, "assets/favicon.png"))
-        print(f"Built deploy bundle in {OUT_DIR} (index.html, styles.css, script.js, assets/)")
+        shutil.copyfile(os.path.join(ROOT, "assets/apple-touch-icon.png"), os.path.join(OUT_DIR, "assets/apple-touch-icon.png"))
+        print(f"Built deploy bundle in {OUT_DIR}")
+        print("  index.html, privacy.html, terms.html, 404.html, sitemap.xml, robots.txt, styles.css, script.js, assets/")
     else:
-        out_path = os.path.join(ROOT, "index.html")
-        with open(out_path, "w") as f:
-            f.write(output)
-        print(f"Built index.html ({len(output):,} bytes) from content.py + template.css + template.js")
+        for name, content_ in [
+            ("index.html", output),
+            ("privacy.html", privacy_html),
+            ("terms.html", terms_html),
+            ("404.html", not_found_html),
+            ("sitemap.xml", sitemap_xml),
+            ("robots.txt", robots_txt),
+        ]:
+            with open(os.path.join(ROOT, name), "w") as f:
+                f.write(content_)
+        print(f"Built index.html ({len(output):,} bytes) + privacy.html + terms.html + 404.html + sitemap.xml + robots.txt")
 
 
 if __name__ == "__main__":

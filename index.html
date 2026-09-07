@@ -3,24 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Home - MedLead Partners</title>
+<title>MedLead Partners</title>
 <meta name="description" content="MedLead Partners generates new patient leads through paid advertising and runs the system that captures, qualifies, follows up with, and moves those leads toward an appointment.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.medleadpartners.com/">
 
-<!-- Open Graph / social link preview foundation.
-     og:image is embedded as the actual brand logo (base64) so the foundation works today;
-     once the site is hosted, replace it with a hosted absolute image URL. Most link-preview
-     crawlers (Slack, iMessage, LinkedIn, etc.) will not fetch a base64 data URI. -->
+<!-- Open Graph / social link preview. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MedLead Partners">
+<meta property="og:url" content="https://www.medleadpartners.com/">
 <meta property="og:title" content="MedLead Partners | Patient Acquisition">
 <meta property="og:description" content="MedLead Partners generates new patient leads through paid advertising and runs the system that captures, qualifies, follows up with, and moves those leads toward an appointment.">
-<meta property="og:image" content="assets/logo.png">
+<meta property="og:image" content="https://www.medleadpartners.com/assets/logo.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MedLead Partners | Patient Acquisition">
 <meta name="twitter:description" content="MedLead Partners generates new patient leads through paid advertising and runs the system that captures, qualifies, follows up with, and moves those leads toward an appointment.">
-<meta name="twitter:image" content="assets/logo.png">
+<meta name="twitter:image" content="https://www.medleadpartners.com/assets/logo.png">
 
 <link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,7 +36,7 @@
   <header class="site-header" id="site-header">
     <div class="container nav-inner">
       <a href="#home" class="logo-link" aria-label="MedLead Partners home">
-        <img src="assets/logo.png" alt="MedLead Partners logo" class="logo-img">
+        <img src="assets/logo.png" alt="MedLead Partners logo" class="logo-img" width="112" height="32">
       </a>
       <nav class="primary-nav" id="primary-nav" aria-label="Primary">
         <a href="#how-it-works" class="">How It Works</a>
@@ -240,16 +241,24 @@
           </div>
 
           <form class="lead-form" id="lead-form" novalidate>
-            <div class="form-row">
-              <div class="field"><label for="name">Name <span class="req">*</span></label><input type="text" id="name" name="name" required autocomplete="name"></div>
-              <div class="field"><label for="business">Business <span class="req">*</span></label><input type="text" id="business" name="business" required autocomplete="organization"></div>
+            <!-- Honeypot spam-protection field: invisible to real visitors (CSS + tabindex="-1"),
+                 but a plain, generic-looking form field to automated bots that fill in every
+                 input they find. If it comes back non-empty, initBookingFlow() in template.js
+                 silently blocks the submission rather than opening the scheduler. -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="hp-website">Leave this field blank</label>
+              <input type="text" id="hp-website" name="hp-website" tabindex="-1" autocomplete="off">
             </div>
             <div class="form-row">
-              <div class="field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" required autocomplete="email"></div>
-              <div class="field"><label for="phone">Phone <span class="req">*</span></label><input type="tel" id="phone" name="phone" required autocomplete="tel"></div>
+              <div class="field"><label for="name">Name <span class="req">*</span></label><input type="text" id="name" name="name" required autocomplete="name" maxlength="100"></div>
+              <div class="field"><label for="business">Business <span class="req">*</span></label><input type="text" id="business" name="business" required autocomplete="organization" maxlength="120"></div>
             </div>
             <div class="form-row">
-              <div class="field"><label for="website">Website</label><input type="url" id="website" name="website" placeholder="Optional" autocomplete="url"></div>
+              <div class="field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" required autocomplete="email" maxlength="200"></div>
+              <div class="field"><label for="phone">Phone <span class="req">*</span></label><input type="tel" id="phone" name="phone" required autocomplete="tel" inputmode="tel" pattern="[0-9\s\-\+\(\)]{7,20}" maxlength="20"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label for="website">Website</label><input type="url" id="website" name="website" placeholder="Optional" autocomplete="url" maxlength="200"></div>
               <div class="field">
                 <label for="practice-type">Practice Type <span class="req">*</span></label>
                 <select id="practice-type" name="practice-type" required>
@@ -263,7 +272,7 @@
                 </select>
               </div>
             </div>
-            <div class="field"><label for="challenge">Biggest Growth Challenge</label><textarea id="challenge" name="challenge" rows="3" placeholder="Optional"></textarea></div>
+            <div class="field"><label for="challenge">Biggest Growth Challenge</label><textarea id="challenge" name="challenge" rows="3" placeholder="Optional" maxlength="1000"></textarea></div>
             <button type="submit" class="btn btn-primary btn-full">Confirm &amp; Book</button>
             <!-- DEV NOTE (not shown to visitors): this form's details currently stay in the
                  browser only (used to prefill Calendly in Step 2). Wire the submit handler in
@@ -314,7 +323,7 @@
     <div class="container">
       <div class="footer-top">
         <div class="footer-brand-block">
-          <img src="assets/logo.png" alt="MedLead Partners logo" class="footer-logo-lg">
+          <img src="assets/logo.png" alt="MedLead Partners logo" class="footer-logo-lg" width="112" height="32">
           <p class="footer-tagline">Patient acquisition, run as one system.</p>
           <div class="footer-contact-line"><a href="mailto:info@medleadpartners.com">info@medleadpartners.com</a></div>
           <div class="footer-social"><a href="https://www.instagram.com/medleadpartners/" class="footer-social-icon" target="_blank" rel="noopener noreferrer" aria-label="MedLead Partners on Instagram"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.6" stroke="currentColor" stroke-width="1.8"/><circle cx="17.3" cy="6.7" r="1.15" fill="currentColor"/></svg></a> <a href="https://www.facebook.com/MedLeadPartners/" class="footer-social-icon" target="_blank" rel="noopener noreferrer" aria-label="MedLead Partners on Facebook"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5" stroke="currentColor" stroke-width="1.8"/><path d="M13.8 18.2V12.4H15.75L16.05 10.05H13.8V8.55C13.8 7.89 13.98 7.44 14.93 7.44H16.13V5.34C15.93 5.31 15.24 5.25 14.44 5.25C12.77 5.25 11.62 6.27 11.62 8.14V10.05H9.75V12.4H11.62V18.2H13.8Z" fill="currentColor"/></svg></a></div>
@@ -333,7 +342,10 @@
 
       <div class="footer-bottom-row">
         <p>&copy; <span id="year"></span> MedLead Partners. All rights reserved.</p>
-        
+        <div class="footer-legal">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+        </div>
       </div>
     </div>
   </footer>

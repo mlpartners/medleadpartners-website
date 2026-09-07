@@ -12,6 +12,9 @@
   --blue-text: #3d63c4;
   --slate: #52566b;
   --border: #e4e7ee;
+  --border-interactive: #878d9f; /* darker than --border specifically for input/select/textarea
+                                     boundaries — WCAG 1.4.11 requires ~3:1 for perceivable UI
+                                     component boundaries; --border alone is only ~1.2:1 on white. */
 
   --font: "Montserrat", -apple-system, BlinkMacSystemFont, sans-serif;
 
@@ -162,8 +165,8 @@ p { color: var(--slate); font-size: 17px; }
   transition: color .15s ease, border-color .15s ease;
 }
 .stage-tab .num { color: var(--border); font-weight: 700; margin-right: 8px; }
-.stage-tab.is-active { color: var(--black); border-color: var(--blue); }
-.stage-tab.is-active .num { color: var(--blue); }
+.stage-tab.is-active { color: var(--black); border-color: var(--blue-dark); }
+.stage-tab.is-active .num { color: var(--blue-dark); }
 .stage-tab:hover { color: var(--black); }
 
 .stage-panel { margin-top: 22px; min-height: 90px; }
@@ -320,7 +323,7 @@ p { color: var(--slate); font-size: 17px; }
   transition: border-color .15s ease, background-color .15s ease, color .15s ease;
 }
 .practice-pill:hover { border-color: var(--blue); }
-.practice-pill.is-active { background: var(--blue); border-color: var(--blue); color: #000; }
+.practice-pill.is-active { background: var(--blue-dark); border-color: var(--blue-dark); color: #000; }
 
 .practice-panel { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); min-height: 70px; }
 .practice-panel-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
@@ -420,11 +423,24 @@ p { color: var(--slate); font-size: 17px; }
 .field label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 5px; }
 .req { color: var(--blue-text); }
 .field input, .field select, .field textarea {
-  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border-interactive); border-radius: var(--radius-sm);
   background: var(--white); transition: border-color .15s ease;
 }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); outline: none; }
 .field textarea { resize: vertical; min-height: 64px; }
+.field input::placeholder, .field textarea::placeholder { color: var(--slate); opacity: 1; }
+/* Invalid-field styling only applies after a real failed submit attempt
+   (form.js adds "was-validated" then) — never on initial page load, or
+   every empty required field would show as an error before the visitor
+   has typed anything. */
+.was-validated .field input:invalid, .was-validated .field select:invalid { border-color: #c0392b; }
+
+/* Honeypot spam-protection field: visually hidden and untabbable for real visitors,
+   but present in the DOM (not display:none) so an automated bot filling every field
+   it finds still fills it in — see the check in initBookingFlow (template.js). */
+.hp-field {
+  position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+}
 
 /* ---------- Booking flow: form -> schedule -> confirmed ---------- */
 .booking-step[hidden] { display: none; }
@@ -491,9 +507,9 @@ p { color: var(--slate); font-size: 17px; }
   display: flex; justify-content: space-between; align-items: center;
   padding: 18px 0; flex-wrap: wrap; gap: 12px;
 }
-.footer-bottom-row p { color: rgba(255,255,255,0.45); font-size: 13px; }
+.footer-bottom-row p { color: rgba(255,255,255,0.55); font-size: 13px; }
 .footer-legal { display: flex; gap: 20px; }
-.footer-legal a { color: rgba(255,255,255,0.45); font-size: 13px; }
+.footer-legal a { color: rgba(255,255,255,0.55); font-size: 13px; }
 .footer-legal a:hover { color: var(--white); }
 
 /* ==========================================================================
@@ -583,4 +599,34 @@ p { color: var(--slate); font-size: 17px; }
   .btn { width: 100%; }
   .nav-inner { height: 68px; }
   .logo-img { height: 26px; }
+}
+
+/* ==========================================================================
+   LEGAL PAGES (Privacy Policy, Terms & Conditions)
+   Same typographic system as the rest of the site — no new visual language.
+   ========================================================================== */
+
+.legal-page h1 { margin-bottom: 8px; }
+.legal-section { margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--border); }
+.legal-section:first-of-type { margin-top: 44px; }
+.legal-section h2 { font-size: 21px; font-weight: 700; margin-bottom: 10px; }
+.legal-section p { max-width: 720px; }
+.legal-section a { color: var(--blue-text); font-weight: 600; }
+.legal-section a:hover { text-decoration: underline; }
+
+/* ==========================================================================
+   404 PAGE
+   ========================================================================== */
+
+.not-found { padding: clamp(80px, 12vw, 140px) 0; text-align: center; }
+.not-found-code {
+  font-size: clamp(56px, 9vw, 96px); font-weight: 800; color: var(--border);
+  line-height: 1; margin-bottom: 8px;
+}
+.not-found h1 { margin-bottom: 14px; }
+.not-found .section-intro { margin-left: auto; margin-right: auto; margin-bottom: 32px; }
+.not-found-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+@media (max-width: 480px) {
+  .not-found-actions { flex-direction: column; align-items: stretch; }
 }

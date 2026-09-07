@@ -29,7 +29,18 @@ SITE_DESCRIPTION = (
 # SITE_TITLE (used for og:title / twitter:title, i.e. social share
 # previews) since the two serve different purposes and a person updating
 # one shouldn't accidentally change the other.
-PAGE_TITLE = "Home - MedLead Partners"
+PAGE_TITLE = "MedLead Partners"
+
+# --------------------------------------------------------------------------
+# PRODUCTION DOMAIN
+#
+# *** UPDATE THIS to the real, final domain before going live. ***
+# Used to build canonical URLs, og:url, the absolute og:image URL (social
+# platforms generally won't fetch a relative image path), and sitemap.xml.
+# Must be the HTTPS version of whatever domain Squarespace/GitHub Pages end
+# up serving (e.g. "https://www.medleadpartners.com"). No trailing slash.
+# --------------------------------------------------------------------------
+SITE_URL = "https://www.medleadpartners.com"
 
 # --------------------------------------------------------------------------
 # NAVIGATION
@@ -266,7 +277,10 @@ SOCIAL_LINKS = [
 ]  # each entry needs a matching icon renderer in build.py's SOCIAL_ICONS, or it falls back to a plain text link
 
 # Only add an entry here once a real destination page exists for it.
-LEGAL_LINKS = []  # e.g. [{"label": "Privacy Policy", "url": "/privacy.html"}]
+LEGAL_LINKS = [
+    {"label": "Privacy Policy", "url": "privacy.html"},
+    {"label": "Terms &amp; Conditions", "url": "terms.html"},
+]
 
 COPYRIGHT_HOLDER = "MedLead Partners"
 
@@ -308,3 +322,169 @@ PRACTICE_TYPE_OPTIONS = [
     ("aesthetic-elective", "Aesthetic &amp; Elective Care"),
     ("other", "Other"),
 ]
+
+# --------------------------------------------------------------------------
+# LEGAL PAGES
+#
+# *** TEMPLATE LEGAL CONTENT — NOT LEGAL ADVICE. ***
+# This is a standard, reasonable starting point for a small B2B marketing
+# services site, not a substitute for review by a licensed attorney familiar
+# with your jurisdiction, industry (working with medical/healthcare-adjacent
+# clients), and how you actually handle data. Have a lawyer review both
+# pages before relying on them, and update LAST_UPDATED whenever the text
+# changes.
+# --------------------------------------------------------------------------
+
+LAST_UPDATED = "September 7, 2026"
+
+PRIVACY_TITLE = "Privacy Policy - MedLead Partners"
+PRIVACY_DESCRIPTION = "How MedLead Partners collects, uses, and protects information submitted through this website."
+
+PRIVACY_SECTIONS = [
+    (
+        "Overview",
+        "This Privacy Policy explains what information MedLead Partners (\u201cwe,\u201d \u201cus,\u201d \u201cour\u201d) "
+        "collects through this website, how we use it, and the choices available to you. It applies to "
+        "this website only, not to any practice or business that partners with MedLead Partners, nor to "
+        "any patient of theirs.",
+    ),
+    (
+        "Information We Collect",
+        "When you submit the \u201cBook a Strategy Call\u201d form, we collect the information you provide: "
+        "your name, business name, email address, phone number, website (optional), practice type, and "
+        "anything you enter under \u201cBiggest Growth Challenge.\u201d We do not currently use analytics or "
+        "tracking cookies of our own on this site.",
+    ),
+    (
+        "How We Use Information",
+        "We use the information you submit to respond to your inquiry, prepare for a scheduled strategy "
+        "call, and evaluate whether MedLead Partners is a good fit for your practice. We do not sell your "
+        "information, and we do not use it for purposes unrelated to responding to your inquiry.",
+    ),
+    (
+        "Scheduling Through Calendly",
+        "After you submit the form, this site opens a scheduling widget provided by Calendly, Inc. so you "
+        "can pick a time for your strategy call. Calendly operates independently of this site: it may set "
+        "its own cookies and process information (such as your name, email, and time zone) according to "
+        "its own privacy policy, available at "
+        "<a href=\"https://calendly.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">calendly.com/privacy</a>.",
+    ),
+    (
+        "Other Third-Party Services",
+        "This site loads the Montserrat typeface from Google Fonts. Loading a font can result in your "
+        "browser making a request to Google's servers; see Google's privacy policy for how they handle "
+        "that. We do not currently run analytics, advertising pixels, or other tracking scripts on this "
+        "site.",
+    ),
+    (
+        "Cookies",
+        "This site does not set its own cookies. The Calendly scheduling widget described above may set "
+        "cookies belonging to Calendly (and its own sub-processors, such as reCAPTCHA) once you open it; "
+        "those are governed by Calendly's privacy policy, not this one.",
+    ),
+    (
+        "Data Retention",
+        "We retain information submitted through the strategy-call form for as long as reasonably "
+        "necessary to respond to your inquiry and, if you become a partner, to provide our services. You "
+        "can request deletion at any time using the contact information below.",
+    ),
+    (
+        "Your Choices",
+        "You can ask us what information we have about you, request a correction, or request deletion, by "
+        "emailing us at the address below. If you'd rather not submit the form, you can still reach us "
+        "directly by email.",
+    ),
+    (
+        "Children's Privacy",
+        "This website is intended for business use by adults evaluating patient-acquisition services for "
+        "their practice. It is not directed at children, and we do not knowingly collect information from "
+        "anyone under 18.",
+    ),
+    (
+        "Changes to This Policy",
+        "We may update this policy from time to time. The date at the top of this page reflects the most "
+        "recent revision.",
+    ),
+    (
+        "Contact",
+        "Questions about this policy or your information can be sent to "
+        f"<a href=\"mailto:{CONTACT_EMAIL}\">{CONTACT_EMAIL}</a>." if CONTACT_EMAIL else
+        "Questions about this policy or your information can be sent using the contact details on this site.",
+    ),
+]
+
+TERMS_TITLE = "Terms & Conditions - MedLead Partners"
+TERMS_DESCRIPTION = "The terms that govern use of the MedLead Partners website and strategy-call booking process."
+
+TERMS_SECTIONS = [
+    (
+        "Agreement to Terms",
+        "By using this website, you agree to these Terms &amp; Conditions. If you do not agree, please do "
+        "not use the site. These terms govern use of the website itself; a separate written agreement "
+        "governs the actual patient-acquisition services provided to any practice that becomes a partner.",
+    ),
+    (
+        "Who This Site Is For",
+        "This website is intended for medical practices, med spas, plastic surgery practices, dental "
+        "practices, and aesthetic/elective-care businesses evaluating patient-acquisition services. It is "
+        "not intended for patients seeking medical care or advice.",
+    ),
+    (
+        "No Medical Advice",
+        "Nothing on this website is medical advice, and MedLead Partners does not provide healthcare "
+        "services, make clinical decisions, or practice medicine in any capacity. Any lead qualification "
+        "described on this site is structural only (location, insurance status, availability) and never "
+        "medical.",
+    ),
+    (
+        "No Guaranteed Results",
+        "We do not guarantee a specific number of leads, appointments, patients, or any particular revenue "
+        "outcome. Results depend on many factors outside our control, including a practice's own follow-up, "
+        "market conditions, and advertising performance.",
+    ),
+    (
+        "The Booking Process",
+        "Submitting the strategy-call form does not itself book a meeting. A meeting is only scheduled once "
+        "you complete that step in the Calendly scheduler and Calendly confirms it. Calendly's own terms of "
+        "service govern your use of that scheduling tool.",
+    ),
+    (
+        "Acceptable Use",
+        "You agree not to use this website to submit false or fraudulent information, attempt to interfere "
+        "with its normal operation, or attempt to gain unauthorized access to it.",
+    ),
+    (
+        "Intellectual Property",
+        "The MedLead Partners name, logo, and the content of this website are the property of MedLead "
+        "Partners and may not be copied or used without permission.",
+    ),
+    (
+        "Third-Party Links and Services",
+        "This site links to or embeds third-party services, including Calendly, Instagram, and Facebook. "
+        "We are not responsible for the content, policies, or practices of those third parties.",
+    ),
+    (
+        "Limitation of Liability",
+        "To the fullest extent permitted by law, MedLead Partners is not liable for any indirect, "
+        "incidental, or consequential damages arising from your use of this website.",
+    ),
+    (
+        "Changes to These Terms",
+        "We may update these terms from time to time. The date at the top of this page reflects the most "
+        "recent revision. Continued use of the site after a change means you accept the updated terms.",
+    ),
+    (
+        "Contact",
+        "Questions about these terms can be sent to "
+        f"<a href=\"mailto:{CONTACT_EMAIL}\">{CONTACT_EMAIL}</a>." if CONTACT_EMAIL else
+        "Questions about these terms can be sent using the contact details on this site.",
+    ),
+]
+
+# --------------------------------------------------------------------------
+# 404 PAGE
+# --------------------------------------------------------------------------
+
+NOT_FOUND_TITLE = "Page Not Found - MedLead Partners"
+NOT_FOUND_HEADLINE = "Page Not Found"
+NOT_FOUND_TEXT = "The page you're looking for doesn't exist or may have moved."
